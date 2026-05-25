@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioForge — Drug Candidates</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2c3e;min-height:100vh}
+
+header{background:linear-gradient(135deg,#0a2540,#1a5d7d);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+header h1{font-size:1.6rem;font-weight:700;color:#fff;letter-spacing:-0.5px}
+header p{font-size:0.8rem;color:#7dc6e8;margin-top:4px}
+.header-badge{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:30px;padding:6px 16px;font-size:0.72rem;color:#b8dff0;font-weight:600}
+
+.toolbar{background:#fff;border-bottom:1px solid #e2eaf0;padding:14px 40px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.toolbar select,.toolbar input[type=range]{border:1px solid #d0dce8;border-radius:8px;padding:7px 12px;font-size:0.8rem;color:#1a2c3e;background:#f8fbfd;outline:none}
+.toolbar select:focus{border-color:#1a5d7d}
+#countLabel{margin-left:auto;font-size:0.75rem;color:#7d99ae;font-weight:600}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:28px 40px;max-width:1400px;margin:0 auto}
+
+.card{background:#fff;border-radius:16px;border:1px solid #e2eaf0;padding:22px;transition:box-shadow 0.2s,transform 0.2s;position:relative;overflow:hidden}
+.card:hover{box-shadow:0 8px 32px rgba(26,93,125,0.12);transform:translateY(-2px)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,#1a5d7d)}
+
+.card-id{font-size:0.65rem;color:#aabfce;font-weight:600;letter-spacing:0.5px;margin-bottom:6px}
+.card-name{font-size:1.05rem;font-weight:700;color:#0a2540;margin-bottom:4px}
+.card-disease{font-size:0.72rem;color:#1a5d7d;font-weight:600;background:#e8f4fb;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:14px}
+
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.score-item{background:#f4f8fc;border-radius:10px;padding:8px 10px}
+.score-label{font-size:0.6rem;color:#7d99ae;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:3px}
+.score-val{font-size:1.0rem;font-weight:700;color:#0a2540}
+.score-bar{height:3px;border-radius:2px;margin-top:4px;background:#e2eaf0}
+.score-fill{height:100%;border-radius:2px;background:var(--bar,#1a5d7d)}
+
+.total-score{background:linear-gradient(135deg,#0a2540,#1a5d7d);border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.total-score span:first-child{font-size:0.7rem;color:#7dc6e8;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.total-score span:last-child{font-size:1.3rem;font-weight:800;color:#fff}
+
+.note{font-size:0.71rem;color:#5a7a90;line-height:1.5;border-top:1px solid #edf2f7;padding-top:10px}
+
+.tag-cancer{--accent:#c0392b}
+.tag-alzheimer{--accent:#8e44ad}
+.tag-parkinson{--accent:#2980b9}
+.tag-diabetes{--accent:#27ae60}
+.tag-other{--accent:#1a5d7d}
+
+.empty{text-align:center;padding:80px 20px;color:#7d99ae;grid-column:1/-1}
+.empty h2{font-size:1.1rem;margin-bottom:8px}
+
+.spinner{display:flex;justify-content:center;align-items:center;padding:80px;grid-column:1/-1}
+.spinner div{width:40px;height:40px;border:3px solid #e2eaf0;border-top-color:#1a5d7d;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+footer{text-align:center;padding:32px;font-size:0.7rem;color:#aabfce;border-top:1px solid #e2eaf0;margin-top:20px}
+footer strong{color:#1a5d7d}
+
+@media(max-width:600px){
+  header{padding:20px}
+  .toolbar{padding:12px 16px}
+  .grid{padding:16px;grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>BioForge &mdash; Drug Candidates</h1>
+    <p>AI-generated molecules &middot; real binding data &middot; disease-directed</p>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <span class="header-badge">&#128300; Generative AI</span>
+    <span class="header-badge">&#9889; ChEMBL validated</span>
+    <span class="header-badge" id="updatedBadge">Updated &mdash;</span>
+  </div>
+</header>
+
+<div class="toolbar">
+  <select id="filterDisease" onchange="applyFilters()">
+    <option value="">All diseases</option>
+  </select>
+  <select id="sortBy" onchange="applyFilters()">
+    <option value="total_score">Sort: Total score</option>
+    <option value="binding_score">Sort: Binding</option>
+    <option value="adme_score">Sort: ADME</option>
+    <option value="safety_score">Sort: Safety</option>
+  </select>
+  <input type="range" id="minScore" min="0" max="1" step="0.05" value="0"
+         oninput="document.getElementById('minScoreVal').textContent=parseFloat(this.value).toFixed(2);applyFilters()">
+  <span style="font-size:0.75rem;color:#5a7a90">Min score: <b id="minScoreVal">0.00</b></span>
+  <span id="countLabel">Loading...</span>
+</div>
+
+<div class="grid" id="grid">
+  <div class="spinner"><div></div></div>
+</div>
+
+<footer>
+  <strong>BioForge GME</strong> &mdash; Proprietary AI drug discovery platform &middot;
+  Structures and synthesis routes are confidential &middot;
+  Data updated weekly from autonomous research agent
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://ohywtzhafpoyrtuyaqni.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_sQ5WW8jzLxC9__JvLelDkQ_GFPrO2_C';
+
+let _all = [];
+
+function scoreColor(v) {
+  if (v >= 0.75) return '#22c55e';
+  if (v >= 0.60) return '#f59e0b';
+  return '#ef4444';
+}
+
+function diseaseTag(d) {
+  if (!d) return 'tag-other';
+  d = d.toLowerCase();
+  if (d.includes('cancer')) return 'tag-cancer';
+  if (d.includes('alzheimer')) return 'tag-alzheimer';
+  if (d.includes('parkinson')) return 'tag-parkinson';
+  if (d.includes('diabetes')) return 'tag-diabetes';
+  return 'tag-other';
+}
+
+function scoreBar(val, color) {
+  const pct = Math.round((val || 0) * 100);
+  return `<div class="score-bar"><div class="score-fill" style="width:${pct}%;--bar:${color}"></div></div>`;
+}
+
+function renderCard(m) {
+  const bs = m.binding_score || 0;
+  const as_ = m.adme_score || 0;
+  const ss = m.safety_score || 0;
+  const hs = m.herg_score;
+  const ts = m.total_score || 0;
+  const tag = diseaseTag(m.disease);
+  const label = m.cancer_type ? '&#127988; Oncology' : '&#128138; CNS / Metabolic';
+  return `
+  <div class="card ${tag}">
+    <div class="card-id">${m.name}</div>
+    <div class="card-name">${m.disease ? m.disease.replace(/\b\w/g,c=>c.toUpperCase()) : 'Unknown'}</div>
+    <span class="card-disease">${label}</span>
+    <div class="total-score">
+      <span>Total Score</span>
+      <span>${ts.toFixed(3)}</span>
+    </div>
+    <div class="scores">
+      <div class="score-item">
+        <div class="score-label">Binding</div>
+        <div class="score-val" style="color:${scoreColor(bs)}">${bs.toFixed(3)}</div>
+        ${scoreBar(bs, scoreColor(bs))}
+      </div>
+      <div class="score-item">
+        <div class="score-label">ADME</div>
+        <div class="score-val" style="color:${scoreColor(as_)}">${as_.toFixed(3)}</div>
+        ${scoreBar(as_, scoreColor(as_))}
+      </div>
+      <div class="score-item">
+        <div class="score-label">Safety</div>
+        <div class="score-val" style="color:${scoreColor(ss)}">${ss.toFixed(3)}</div>
+        ${scoreBar(ss, scoreColor(ss))}
+      </div>
+      <div class="score-item">
+        <div class="score-label">hERG</div>
+        <div class="score-val" style="color:${hs != null ? scoreColor(hs) : '#aabfce'}">${hs != null ? hs.toFixed(3) : '—'}</div>
+        ${hs != null ? scoreBar(hs, scoreColor(hs)) : ''}
+      </div>
+    </div>
+    ${m.scientific_note ? `<div class="note">${m.scientific_note}</div>` : ''}
+  </div>`;
+}
+
+function populateDiseaseFilter(data) {
+  const diseases = [...new Set(data.map(m => m.disease).filter(Boolean))].sort();
+  const sel = document.getElementById('filterDisease');
+  diseases.forEach(d => {
+    const o = document.createElement('option');
+    o.value = d;
+    o.textContent = d.replace(/\b\w/g, c => c.toUpperCase());
+    sel.appendChild(o);
+  });
+}
+
+function applyFilters() {
+  const disease  = document.getElementById('filterDisease').value;
+  const sortBy   = document.getElementById('sortBy').value;
+  const minScore = parseFloat(document.getElementById('minScore').value);
+
+  let data = _all.filter(m => {
+    if (disease && m.disease !== disease) return false;
+    if ((m.total_score || 0) < minScore) return false;
+    return true;
+  });
+  data.sort((a, b) => (b[sortBy] || 0) - (a[sortBy] || 0));
+
+  document.getElementById('countLabel').textContent = `${data.length} candidates`;
+  const grid = document.getElementById('grid');
+
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty"><h2>No candidates match the filter</h2><p>Try lowering the minimum score.</p></div>`;
+    return;
+  }
+  grid.innerHTML = data.map(renderCard).join('');
+}
+
+async function load() {
+  try {
+    const resp = await fetch(
+      `${SUPABASE_URL}/rest/v1/public_candidates?select=*&order=total_score.desc&limit=200`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!resp.ok) throw new Error(resp.statusText);
+    _all = await resp.json();
+
+    if (!_all.length) {
+      document.getElementById('grid').innerHTML =
+        `<div class="empty"><h2>No data yet</h2><p>The research agent is still generating candidates.</p></div>`;
+      document.getElementById('countLabel').textContent = '0 candidates';
+      return;
+    }
+
+    const latest = _all.map(m => m.updated_at).filter(Boolean).sort().pop();
+    if (latest) {
+      document.getElementById('updatedBadge').textContent =
+        'Updated ' + new Date(latest).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    }
+
+    populateDiseaseFilter(_all);
+    applyFilters();
+  } catch(e) {
+    document.getElementById('grid').innerHTML =
+      `<div class="empty"><h2>Could not load data</h2><p>${e.message}</p></div>`;
+    document.getElementById('countLabel').textContent = 'Error';
+  }
+}
+
+load();
+</script>
+</body>
+</html>
