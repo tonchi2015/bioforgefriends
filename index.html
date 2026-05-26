@@ -166,7 +166,55 @@ footer strong{color:#1a5d7d}
   .panel-body{padding:18px}
   .cmp-metric{width:90px}
   .header-right{width:100%}
+  .fund-grid{grid-template-columns:1fr}
 }
+
+/* ── Tabs ── */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+body{padding-bottom:70px}
+
+/* ── Bottom Nav ── */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2eaf0;display:flex;z-index:500;box-shadow:0 -2px 14px rgba(0,0,0,0.07)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 0 8px;border:none;background:none;cursor:pointer;font-size:0.6rem;font-weight:700;color:#aabfce;letter-spacing:0.4px;text-transform:uppercase;transition:color 0.18s;position:relative}
+.nav-btn.active{color:#0a2540}
+.nav-btn svg{width:20px;height:20px}
+.nav-new-dot{position:absolute;top:7px;right:calc(50% - 15px);width:7px;height:7px;background:#22c55e;border-radius:50%;border:2px solid #fff}
+
+/* ── Agents ── */
+.agents-toolbar{background:#fff;border-bottom:1px solid #e2eaf0;padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:0;z-index:10}
+.agents-toolbar input,.agents-toolbar select{border:1px solid #d0dce8;border-radius:8px;padding:7px 12px;font-size:0.82rem;color:#1a2c3e;background:#f8fbfd;outline:none}
+.agents-toolbar input{flex:1;max-width:260px}
+.agents-wrap{padding:0 16px 16px}
+.agent-domain-hdr{font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#7d99ae;display:flex;align-items:center;gap:8px;margin:20px 0 10px}
+.agent-domain-hdr::after{content:'';flex:1;height:1px;background:#e2eaf0}
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.agent-card{background:#fff;border-radius:14px;border:1px solid #e2eaf0;padding:15px;position:relative;overflow:hidden;transition:box-shadow 0.2s,transform 0.15s}
+.agent-card:hover{box-shadow:0 4px 16px rgba(26,93,125,0.1);transform:translateY(-1px)}
+.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac,#1a5d7d)}
+.agent-name{font-size:0.88rem;font-weight:700;color:#0a2540;margin-bottom:8px}
+.agent-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px;min-height:16px}
+.abadge{border-radius:20px;padding:2px 7px;font-size:0.6rem;font-weight:700}
+.abadge-bbb{background:#e0f2fe;color:#0369a1}
+.abadge-plac{background:#f0fdf4;color:#166534}
+.abadge-warn{background:#fef3c7;color:#b45309}
+.agent-targets{display:flex;gap:4px;flex-wrap:wrap}
+.agent-target{background:#f0f4f8;color:#3a5a72;border-radius:5px;padding:2px 7px;font-size:0.62rem;font-weight:600;font-family:monospace}
+
+/* ── About ── */
+.about-wrap{padding:20px;max-width:680px;margin:0 auto}
+.about-hero{background:linear-gradient(135deg,#0a2540,#1a5d7d);border-radius:20px;padding:28px 24px;color:#fff;margin-bottom:18px}
+.about-hero h2{font-size:1.25rem;font-weight:800;margin-bottom:10px}
+.about-hero p{font-size:0.84rem;color:#b8dff0;line-height:1.75}
+.about-card{background:#fff;border-radius:16px;border:1px solid #e2eaf0;padding:22px;margin-bottom:14px}
+.about-card h3{font-size:0.92rem;font-weight:800;color:#0a2540;margin-bottom:10px}
+.about-card p{font-size:0.82rem;color:#3a5a72;line-height:1.75;margin-bottom:8px}
+.about-card p:last-child{margin-bottom:0}
+.about-tag{display:inline-block;background:#e8f4fb;color:#1a5d7d;border-radius:20px;padding:3px 10px;font-size:0.7rem;font-weight:700;margin:3px 3px 0 0}
+.fund-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.fund-item{background:#f4f8fc;border-radius:10px;padding:11px 12px}
+.fund-item-title{font-size:0.72rem;font-weight:800;color:#0a2540;margin-bottom:3px}
+.fund-item-sub{font-size:0.64rem;color:#7d99ae;line-height:1.4}
 </style>
 </head>
 <body>
@@ -213,6 +261,7 @@ footer strong{color:#1a5d7d}
   </div>
 </div>
 
+<div id="tabHome" class="tab-panel active">
 <header>
   <div style="display:flex;align-items:center;gap:18px">
     <div style="width:52px;height:52px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -317,6 +366,92 @@ footer strong{color:#1a5d7d}
   Structures and synthesis routes are confidential &middot;
   Data updated weekly from autonomous research agent
 </footer>
+</div><!-- /tabHome -->
+
+<!-- ── New Tab ── -->
+<div id="tabNew" class="tab-panel">
+  <div class="toolbar" style="border-bottom:1px solid #e2eaf0">
+    <span style="font-size:0.82rem;font-weight:700;color:#0a2540">Recently Added</span>
+    <span id="newCount" style="margin-left:auto;font-size:0.78rem;color:#7d99ae;font-weight:600"></span>
+  </div>
+  <div class="grid" id="gridNew"><div class="spinner"><div></div></div></div>
+</div>
+
+<!-- ── Agents Tab ── -->
+<div id="tabAgents" class="tab-panel">
+  <div class="agents-toolbar">
+    <input id="agentSearch" type="text" placeholder="Search agents or targets..." oninput="filterAgents()">
+    <select id="agentDomain" onchange="filterAgents()">
+      <option value="">All domains</option>
+    </select>
+    <span id="agentCount" style="font-size:0.78rem;color:#7d99ae;font-weight:600;margin-left:auto"></span>
+  </div>
+  <div class="agents-wrap" id="agentsWrap"></div>
+</div>
+
+<!-- ── About Tab ── -->
+<div id="tabAbout" class="tab-panel">
+  <div class="about-wrap">
+    <div class="about-hero">
+      <h2>Building the Future of Drug Discovery</h2>
+      <p>BioForge GME is an autonomous AI research platform that continuously generates, scores, and refines novel therapeutic molecules — 24 hours a day, across 34 disease areas and 50+ cancer subtypes. Every candidate you see here was designed by machine intelligence trained on 2.85 million real binding measurements.</p>
+    </div>
+
+    <div class="about-card">
+      <h3>🔬 The Technology</h3>
+      <p>Our Generative Molecular Explorer (GME) combines BRICS fragment assembly with XGBoost-based pIC50 scoring trained on ChEMBL 36 — the world's largest curated bioactivity database. Candidates are filtered through Lipinski Rule of 5, hERG cardiac safety screens, and Tanimoto novelty checks (similarity &lt; 0.35 vs. all known drugs).</p>
+      <p>The autonomous agent runs continuously, expanding the candidate library each cycle. Target proteins are assigned per disease context; BBB-penetrant and placenta-crossing profiles are computed separately for CNS and prenatal indications.</p>
+      <span class="about-tag">XGBoost pIC50</span><span class="about-tag">BRICS Generation</span><span class="about-tag">Pareto Optimization</span><span class="about-tag">ChEMBL 36</span><span class="about-tag">hERG Safety</span>
+    </div>
+
+    <div class="about-card">
+      <h3>📄 Intellectual Property &amp; Patent Strategy</h3>
+      <p>Novel molecular structures generated by BioForge GME are assessed for patentability prior to disclosure. Candidates passing novelty screening (Tanimoto &lt; 0.35 vs. entire ChEMBL) represent genuinely new chemical matter — a prerequisite for patent protection under international patent law.</p>
+      <p>Our strategy follows a staged IP protection approach: <strong>provisional patent applications</strong> are filed within 12 months of candidate identification to establish priority dates; these are converted to full PCT (Patent Cooperation Treaty) applications upon in-vitro validation. In-vitro confirmation of binding activity (IC50 assays, SPR, or ITC) transforms a computational hypothesis into defensible prior art.</p>
+      <p>Partners investing at this stage participate in the value created before clinical translation — historically the most capital-efficient entry point in drug development.</p>
+    </div>
+
+    <div class="about-card">
+      <h3>💰 Funding Landscape</h3>
+      <p>While the autonomous research agent continuously expands the candidate library, parallel funding tracks accelerate the path to clinical validation:</p>
+      <div class="fund-grid">
+        <div class="fund-item"><div class="fund-item-title">NIH SBIR / STTR</div><div class="fund-item-sub">US federal grants for early-stage biotech. Phase I up to $300K non-dilutive.</div></div>
+        <div class="fund-item"><div class="fund-item-title">ERC &amp; Horizon Europe</div><div class="fund-item-sub">EU research funding for AI-driven drug discovery. Up to €2.5M per project.</div></div>
+        <div class="fund-item"><div class="fund-item-title">Pharma Partnerships</div><div class="fund-item-sub">Co-development agreements with mid-size pharma for specific indication licensing.</div></div>
+        <div class="fund-item"><div class="fund-item-title">Angel / Seed Round</div><div class="fund-item-sub">Strategic angel investors with biotech or clinical expertise. Currently open.</div></div>
+        <div class="fund-item"><div class="fund-item-title">Wellcome Trust</div><div class="fund-item-sub">Grants for neglected diseases (Malaria, TB, HCV). Up to £500K.</div></div>
+        <div class="fund-item"><div class="fund-item-title">BARDA / DARPA</div><div class="fund-item-sub">US defense-linked funding for infectious disease and pandemic preparedness.</div></div>
+      </div>
+    </div>
+
+    <div class="about-card">
+      <h3>⚗️ Path to Clinic</h3>
+      <p>Computational discovery → <strong>In-silico validation</strong> (binding, ADME, toxicity prediction) → <strong>In-vitro confirmation</strong> (biochemical assays, cell viability) → <strong>In-vivo proof-of-concept</strong> (animal models) → <strong>IND filing</strong> → Phase I clinical trial. BioForge candidates enter this pipeline at the first stage, with the most promising advancing to in-vitro within 18–24 months of initial generation.</p>
+      <p style="font-size:0.75rem;color:#aabfce;margin-top:8px">All projections are subject to regulatory approval and clinical outcomes. Drug development involves substantial risk.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Bottom Nav ── -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="btn-home" onclick="showTab('home')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </button>
+  <button class="nav-btn" id="btn-new" onclick="showTab('new')">
+    <div class="nav-new-dot"></div>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    New
+  </button>
+  <button class="nav-btn" id="btn-agents" onclick="showTab('agents')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Agents
+  </button>
+  <button class="nav-btn" id="btn-about" onclick="showTab('about')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    About Us
+  </button>
+</nav>
 
 <script>
 const SUPABASE_URL = 'https://ohywtzhafpoyrtuyaqni.supabase.co';
@@ -705,6 +840,132 @@ function doLogin(){
 if(sessionStorage.getItem('bf_auth')){
   document.getElementById('loginOverlay').style.display='none';
   load();
+}
+
+// ── Tab switching ──
+function showTab(name){
+  ['home','new','agents','about'].forEach(t=>{
+    document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active',t===name);
+    document.getElementById('btn-'+t).classList.toggle('active',t===name);
+  });
+  if(name==='agents' && !document.getElementById('agentsWrap').children.length) renderAgents();
+  if(name==='new' && !document.getElementById('gridNew').querySelector('.card')) renderNew();
+}
+
+// ── New tab ──
+function renderNew(){
+  const recent=[..._all].sort((a,b)=>b.id-a.id).slice(0,20);
+  const grid=document.getElementById('gridNew');
+  document.getElementById('newCount').textContent=`${recent.length} latest`;
+  grid.innerHTML=recent.map(renderCard).join('');
+}
+
+// ── Agents data ──
+const AGENTS=[
+  {domain:'Онкологија',icon:'🧬',color:'#c0392b',list:[
+    {name:'Glioblastoma (GBM)',tags:['BBB'],targets:['EGFR','IDH1','mTOR']},
+    {name:'CLL',tags:[],targets:['BCL-2','BTK','PI3K-δ']},
+    {name:'Breast Cancer',tags:[],targets:['ESR1','HER2','PARP','CDK4/6']},
+    {name:'Pancreatic PDAC',tags:[],targets:['KRAS','MEK','IDO1']},
+    {name:'General Cancer',tags:[],targets:['PD-1','PD-L1','IDO1']},
+  ]},
+  {domain:'Хематологија',icon:'🩸',color:'#e74c3c',list:[
+    {name:'Anemia (EPO/PHD2)',tags:['⚠'],targets:['PHD2','HIF-2α','EPO-R']},
+    {name:'Thrombosis',tags:['⚠'],targets:['Xa','Thrombin','PAR1']},
+    {name:'Leukemia AML/CML',tags:[],targets:['BCR-ABL','FLT3','MCL-1']},
+  ]},
+  {domain:'Ревматологија',icon:'💊',color:'#8e44ad',list:[
+    {name:'Rheumatoid Arthritis',tags:[],targets:['TNF','IL-6','JAK1']},
+    {name:'Psoriatic Arthritis',tags:[],targets:['IL-17','IL-23','TYK2']},
+    {name:'SLE',tags:['⚠'],targets:['IFN-α','BTK','TLR7']},
+  ]},
+  {domain:'Дерматологија',icon:'🌿',color:'#f39c12',list:[
+    {name:'Psoriasis',tags:[],targets:['IL-17','IL-23','TYK2']},
+    {name:'Atopic Dermatitis',tags:[],targets:['IL-4R','TSLP','JAK1']},
+  ]},
+  {domain:'Нефрологија',icon:'💧',color:'#16a085',list:[
+    {name:'CKD / Renal Fibrosis',tags:[],targets:['TGF-β1','SMAD3','Nrf2']},
+    {name:'Diabetic Nephropathy',tags:[],targets:['RAGE','SGLT2','PKC-β']},
+    {name:'IgA Nephropathy',tags:[],targets:['APRIL','BAFF','TACI','C3']},
+  ]},
+  {domain:'Гастроентерологија',icon:'🫁',color:'#27ae60',list:[
+    {name:'IBD (Crohn / UC)',tags:[],targets:['TNF','IL-23','JAK1']},
+    {name:'Celiac Disease',tags:[],targets:['tTG2','IL-15','NF-κB']},
+  ]},
+  {domain:'Пулмологија',icon:'🫧',color:'#2980b9',list:[
+    {name:'IPF',tags:['⚠'],targets:['TGF-β1','Autotaxin']},
+    {name:'Asthma / COPD',tags:[],targets:['TSLP','IL-5','PDE4']},
+  ]},
+  {domain:'Аутизам',icon:'🧠',color:'#8e44ad',list:[
+    {name:'Prenatal (LogPS>-1.0)',tags:['⚠','PlacBBB'],targets:['IL-6','JAK1','Nrf2']},
+    {name:'Postnatal (BBB/GABA)',tags:['BBB'],targets:['GABA-A','GABA-B','mGluR5']},
+  ]},
+  {domain:'Невродегенеративни',icon:'⚡',color:'#1a5d7d',list:[
+    {name:'Neurodegenerative',tags:['BBB'],targets:['BACE1','GSK3β','NLRP3']},
+    {name:'Parkinson',tags:['BBB'],targets:['LRRK2','α-syn','MAO-B']},
+    {name:'Stroke',tags:['⚠','BBB'],targets:['NMDA','MMP-9']},
+  ]},
+  {domain:'Инфективни болести',icon:'🦠',color:'#7f8c8d',list:[
+    {name:'HIV-1',tags:['⚠'],targets:['PR','RT','Integrase','gp120']},
+    {name:'Hepatitis B (HBV)',tags:[],targets:['HBV-Pol','cccDNA','HBsAg']},
+    {name:'Hepatitis C (HCV)',tags:[],targets:['NS3/4A','NS5A','NS5B']},
+    {name:'Malaria',tags:[],targets:['PfATP4','DHODH','PfDHFR']},
+    {name:'Tuberculosis (TB)',tags:[],targets:['InhA','DprE1','MmpL3']},
+  ]},
+  {domain:'Ендокринологија',icon:'⚗️',color:'#e67e22',list:[
+    {name:'Diabetes T1 (β-cell)',tags:[],targets:['GAD65','IA-2','IL-10','FOXP3']},
+    {name:'Hashimoto',tags:[],targets:['TPO','Tg','JAK1']},
+    {name:"Graves' Disease",tags:[],targets:['TSHR','IGF-1R','TRAb']},
+    {name:'Osteoporosis',tags:[],targets:['RANKL','CatK','Src']},
+    {name:'PCOS',tags:['⚠'],targets:['INSR','GLP-1R','AR']},
+  ]},
+  {domain:'Офталмологија',icon:'👁',color:'#2980b9',list:[
+    {name:'Diabetic Retinopathy',tags:[],targets:['VEGFR2','PKC-β','Tie2']},
+    {name:'Glaucoma',tags:[],targets:['ROCK1','ROCK2','IOP']},
+    {name:'AMD',tags:[],targets:['VEGFR','PDGFR','C3/C5']},
+  ]},
+  {domain:'Гинекологија',icon:'🌸',color:'#e91e8c',list:[
+    {name:'Endometriosis',tags:['⚠'],targets:['GnRH-R','JAK1','TNF-α']},
+  ]},
+];
+
+function renderAgents(){
+  const sel=document.getElementById('agentDomain');
+  AGENTS.forEach(d=>{
+    const o=document.createElement('option');
+    o.value=d.domain; o.textContent=d.icon+' '+d.domain;
+    sel.appendChild(o);
+  });
+  filterAgents();
+}
+
+function filterAgents(){
+  const q=(document.getElementById('agentSearch').value||'').toLowerCase();
+  const dom=document.getElementById('agentDomain').value;
+  let total=0;
+  const html=AGENTS.map(d=>{
+    if(dom && d.domain!==dom) return '';
+    const cards=d.list.filter(a=>{
+      if(!q) return true;
+      return a.name.toLowerCase().includes(q)||a.targets.some(t=>t.toLowerCase().includes(q));
+    });
+    if(!cards.length) return '';
+    total+=cards.length;
+    const cardsHtml=cards.map(a=>`
+      <div class="agent-card" style="--ac:${d.color}">
+        <div class="agent-name">${a.name}</div>
+        <div class="agent-badges">${a.tags.map(t=>{
+          if(t==='BBB') return '<span class="abadge abadge-bbb">BBB</span>';
+          if(t==='PlacBBB') return '<span class="abadge abadge-plac">PlacBBB</span>';
+          if(t==='⚠') return '<span class="abadge abadge-warn">⚠ High attention</span>';
+          return '';
+        }).join('')}</div>
+        <div class="agent-targets">${a.targets.map(t=>`<span class="agent-target">${t}</span>`).join('')}</div>
+      </div>`).join('');
+    return `<div class="agent-domain-hdr">${d.icon} ${d.domain}</div><div class="agents-grid">${cardsHtml}</div>`;
+  }).join('');
+  document.getElementById('agentsWrap').innerHTML=html||'<p style="padding:40px;text-align:center;color:#aabfce">No agents match.</p>';
+  document.getElementById('agentCount').textContent=`${total} agents`;
 }
 </script>
 </body>
