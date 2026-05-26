@@ -716,7 +716,7 @@ const iTarget='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" strok
 const iWave='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
 
 // ── Cards ─────────────────────────────────────────────────────────
-const _today=new Date().toISOString().slice(0,10);
+const _d=new Date();const _today=`${_d.getFullYear()}-${String(_d.getMonth()+1).padStart(2,'0')}-${String(_d.getDate()).padStart(2,'0')}`;
 function cardBadge(m){
   if(m.is_improved) return '<span class="card-badge badge-improved">Improved</span>';
   if(m.first_seen && m.first_seen===_today) return '<span class="card-badge badge-new">New</span>';
