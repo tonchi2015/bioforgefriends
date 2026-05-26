@@ -188,10 +188,9 @@ body{padding-bottom:70px}
 .agents-wrap{padding:0 16px 16px}
 .agent-domain-hdr{font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;color:#7d99ae;display:flex;align-items:center;gap:8px;margin:20px 0 10px}
 .agent-domain-hdr::after{content:'';flex:1;height:1px;background:#e2eaf0}
-.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
-.agent-card{background:#fff;border-radius:14px;border:1px solid #e2eaf0;padding:15px;position:relative;overflow:hidden;transition:box-shadow 0.2s,transform 0.15s}
-.agent-card:hover{box-shadow:0 4px 16px rgba(26,93,125,0.1);transform:translateY(-1px)}
-.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac,#1a5d7d)}
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.agent-card{background:#fff;border-radius:14px;border:1.5px solid var(--ac,#e2eaf0);padding:15px;position:relative;overflow:hidden;transition:box-shadow 0.2s,transform 0.15s}
+.agent-card:hover{box-shadow:0 4px 16px rgba(0,0,0,0.09);transform:translateY(-1px)}
 .agent-name{font-size:0.88rem;font-weight:700;color:#0a2540;margin-bottom:8px}
 .agent-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px;min-height:16px}
 .abadge{border-radius:20px;padding:2px 7px;font-size:0.6rem;font-weight:700}
@@ -882,69 +881,69 @@ function hexRgb(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(
 
 // ── Agents data ──
 const AGENTS=[
-  {domain:'Онкологија',svg:'onco',color:'#c0392b',list:[
+  {domain:'Oncology',svg:'onco',color:'#c0392b',list:[
     {name:'Glioblastoma (GBM)',tags:['BBB'],targets:['EGFR','IDH1','mTOR'],desc:'Aggressive primary brain tumor driven by EGFR amplification and IDH mutations with dismal prognosis.'},
     {name:'CLL',tags:[],targets:['BCL-2','BTK','PI3K-δ'],desc:'B-cell malignancy reliant on BCR signaling and BCL-2-mediated evasion of apoptosis.'},
     {name:'Breast Cancer',tags:[],targets:['ESR1','HER2','PARP','CDK4/6'],desc:'Hormone receptor and HER2-driven proliferation with PARP-dependent DNA repair vulnerability.'},
     {name:'Pancreatic PDAC',tags:[],targets:['KRAS','MEK','IDO1'],desc:'Highly aggressive adenocarcinoma with near-universal KRAS mutation and immunosuppressive tumor microenvironment.'},
     {name:'General Cancer',tags:[],targets:['PD-1','PD-L1','IDO1'],desc:'Immune checkpoint evasion via PD-1/PD-L1 axis exploited across multiple solid tumor types.'},
   ]},
-  {domain:'Хематологија',svg:'hema',color:'#e74c3c',list:[
+  {domain:'Hematology',svg:'hema',color:'#e74c3c',list:[
     {name:'Anemia (EPO/PHD2)',tags:['⚠'],targets:['PHD2','HIF-2α','EPO-R'],desc:'PHD2 inhibition stabilizes HIF-2α to upregulate erythropoietin and restore red blood cell production.'},
     {name:'Thrombosis',tags:['⚠'],targets:['Xa','Thrombin','PAR1'],desc:'Coagulation cascade overactivation via Factor Xa and thrombin leading to pathological clot formation.'},
     {name:'Leukemia AML/CML',tags:[],targets:['BCR-ABL','FLT3','MCL-1'],desc:'BCR-ABL fusion oncogene drives myeloid proliferation; FLT3 mutation confers adverse prognosis in AML.'},
   ]},
-  {domain:'Ревматологија',svg:'rheu',color:'#8e44ad',list:[
+  {domain:'Rheumatology',svg:'rheu',color:'#8e44ad',list:[
     {name:'Rheumatoid Arthritis',tags:[],targets:['TNF','IL-6','JAK1'],desc:'Chronic synovial inflammation sustained by TNF and IL-6 cytokine amplification loops.'},
     {name:'Psoriatic Arthritis',tags:[],targets:['IL-17','IL-23','TYK2'],desc:'IL-17/IL-23 axis drives concurrent joint inflammation and epidermal plaque formation.'},
     {name:'SLE',tags:['⚠'],targets:['IFN-α','BTK','TLR7'],desc:'Type I interferon signature and B-cell hyperactivation underlie multi-organ autoimmune destruction.'},
   ]},
-  {domain:'Дерматологија',svg:'derm',color:'#f39c12',list:[
+  {domain:'Dermatology',svg:'derm',color:'#f39c12',list:[
     {name:'Psoriasis',tags:[],targets:['IL-17','IL-23','TYK2'],desc:'Keratinocyte hyperproliferation driven by IL-17/IL-23 immune dysregulation and TYK2 signaling.'},
     {name:'Atopic Dermatitis',tags:[],targets:['IL-4R','TSLP','JAK1'],desc:'Th2-skewed epithelial inflammation mediated by IL-4R and TSLP barrier-derived cytokine signaling.'},
   ]},
-  {domain:'Нефрологија',svg:'neph',color:'#16a085',list:[
+  {domain:'Nephrology',svg:'neph',color:'#16a085',list:[
     {name:'CKD / Renal Fibrosis',tags:[],targets:['TGF-β1','SMAD3','Nrf2'],desc:'TGF-β1/SMAD3 pathway drives progressive glomerular and interstitial fibrosis leading to kidney failure.'},
     {name:'Diabetic Nephropathy',tags:[],targets:['RAGE','SGLT2','PKC-β'],desc:'Hyperglycemia-induced RAGE and PKC-β activation causes endothelial dysfunction and glomerulosclerosis.'},
     {name:'IgA Nephropathy',tags:[],targets:['APRIL','BAFF','TACI','C3'],desc:'Galactose-deficient IgA1 immune complexes activate complement and trigger mesangial cell injury.'},
   ]},
-  {domain:'Гастроентерологија',svg:'gast',color:'#27ae60',list:[
+  {domain:'Gastroenterology',svg:'gast',color:'#27ae60',list:[
     {name:'IBD (Crohn / UC)',tags:[],targets:['TNF','IL-23','JAK1'],desc:'Dysregulated mucosal immunity with TNF and IL-23 sustaining chronic transmural intestinal inflammation.'},
     {name:'Celiac Disease',tags:[],targets:['tTG2','IL-15','NF-κB'],desc:'tTG2-mediated gliadin deamidation triggers HLA-DQ2/DQ8-restricted T-cell mucosal response.'},
   ]},
-  {domain:'Пулмологија',svg:'pulm',color:'#2980b9',list:[
+  {domain:'Pulmonology',svg:'pulm',color:'#2980b9',list:[
     {name:'IPF',tags:['⚠'],targets:['TGF-β1','Autotaxin'],desc:'Progressive pulmonary fibrosis driven by TGF-β1 and autotaxin-derived lysophosphatidic acid signaling.'},
     {name:'Asthma / COPD',tags:[],targets:['TSLP','IL-5','PDE4'],desc:'Airway hyperreactivity and eosinophilic inflammation mediated by TSLP, IL-5, and elevated PDE4 activity.'},
   ]},
-  {domain:'Аутизам',svg:'aut',color:'#7c3aed',list:[
+  {domain:'Autism',svg:'aut',color:'#7c3aed',list:[
     {name:'Prenatal (LogPS>-1.0)',tags:['⚠','PlacBBB'],targets:['IL-6','JAK1','Nrf2'],desc:'Maternal immune activation via IL-6/JAK1 alters fetal neurodevelopment; placental penetration required.'},
     {name:'Postnatal (BBB/GABA)',tags:['BBB'],targets:['GABA-A','GABA-B','mGluR5'],desc:'GABAergic inhibitory-excitatory imbalance and mGluR5 dysregulation contribute to ASD behavioral phenotype.'},
   ]},
-  {domain:'Невродегенеративни',svg:'neuro',color:'#1a5d7d',list:[
+  {domain:'Neurodegenerative',svg:'neuro',color:'#1a5d7d',list:[
     {name:'Neurodegenerative',tags:['BBB'],targets:['BACE1','GSK3β','NLRP3'],desc:'BACE1-driven amyloid processing, tau hyperphosphorylation via GSK3β, and NLRP3 neuroinflammation.'},
     {name:'Parkinson',tags:['BBB'],targets:['LRRK2','α-syn','MAO-B'],desc:'LRRK2 kinase hyperactivity and α-synuclein aggregation drive dopaminergic nigrostriatal neurodegeneration.'},
     {name:'Stroke',tags:['⚠','BBB'],targets:['NMDA','MMP-9'],desc:'NMDA receptor excitotoxicity and MMP-9-mediated BBB disruption cause ischemic neuronal death.'},
   ]},
-  {domain:'Инфективни болести',svg:'infect',color:'#7f8c8d',list:[
+  {domain:'Infectious Diseases',svg:'infect',color:'#7f8c8d',list:[
     {name:'HIV-1',tags:['⚠'],targets:['PR','RT','Integrase','gp120'],desc:'Multi-target approach simultaneously blocking protease, reverse transcriptase, integrase, and viral entry.'},
     {name:'Hepatitis B (HBV)',tags:[],targets:['HBV-Pol','cccDNA','HBsAg'],desc:'Suppression of viral polymerase and elimination of cccDNA reservoir for functional cure.'},
     {name:'Hepatitis C (HCV)',tags:[],targets:['NS3/4A','NS5A','NS5B'],desc:'Pan-genotypic direct-acting antiviral strategy targeting NS3/4A protease and replication complex.'},
     {name:'Malaria',tags:[],targets:['PfATP4','DHODH','PfDHFR'],desc:'Disruption of P. falciparum ion homeostasis, pyrimidine biosynthesis, and folate metabolism.'},
     {name:'Tuberculosis (TB)',tags:[],targets:['InhA','DprE1','MmpL3'],desc:'Targeting mycolic acid biosynthesis, arabinogalactan synthesis, and lipid transport in M. tuberculosis.'},
   ]},
-  {domain:'Ендокринологија',svg:'endo',color:'#e67e22',list:[
+  {domain:'Endocrinology',svg:'endo',color:'#e67e22',list:[
     {name:'Diabetes T1 (β-cell)',tags:[],targets:['GAD65','IA-2','IL-10','FOXP3'],desc:'Autoimmune β-cell destruction mediated by GAD65/IA-2 autoreactive T-cells with regulatory impairment.'},
     {name:'Hashimoto',tags:[],targets:['TPO','Tg','JAK1'],desc:'Thyroid peroxidase autoantibodies and JAK1-driven inflammation cause progressive hypothyroidism.'},
     {name:"Graves' Disease",tags:[],targets:['TSHR','IGF-1R','TRAb'],desc:'TSHR-stimulating autoantibodies cause hyperthyroidism, orbitopathy, and thyroid hyperplasia.'},
     {name:'Osteoporosis',tags:[],targets:['RANKL','CatK','Src'],desc:'RANKL-driven osteoclast activation leads to bone mineral density loss exceeding osteoblast formation.'},
     {name:'PCOS',tags:['⚠'],targets:['INSR','GLP-1R','AR'],desc:'Insulin resistance, androgen excess, and GLP-1R metabolic dysfunction drive ovarian dysfunction.'},
   ]},
-  {domain:'Офталмологија',svg:'opht',color:'#0369a1',list:[
+  {domain:'Ophthalmology',svg:'opht',color:'#0369a1',list:[
     {name:'Diabetic Retinopathy',tags:[],targets:['VEGFR2','PKC-β','Tie2'],desc:'VEGFR2 and PKC-β drive pathological retinal neovascularization and vascular permeability.'},
     {name:'Glaucoma',tags:[],targets:['ROCK1','ROCK2','IOP'],desc:'ROCK1/2 kinase inhibition reduces intraocular pressure by relaxing trabecular meshwork tone.'},
     {name:'AMD',tags:[],targets:['VEGFR','PDGFR','C3/C5'],desc:'Complement and VEGF-driven choroidal neovascularization causes progressive macular photoreceptor loss.'},
   ]},
-  {domain:'Гинекологија',svg:'gyn',color:'#be185d',list:[
+  {domain:'Gynecology',svg:'gyn',color:'#be185d',list:[
     {name:'Endometriosis',tags:['⚠'],targets:['GnRH-R','JAK1','TNF-α'],desc:'Ectopic endometrial implants respond to estrogen with JAK1-mediated peritoneal inflammatory cascade.'},
   ]},
 ];
@@ -972,7 +971,7 @@ function filterAgents(){
     if(!cards.length) return '';
     total+=cards.length;
     const cardsHtml=cards.map(a=>`
-      <div class="agent-card" style="--ac:${d.color};background:${hexRgb(d.color,0.05)}">
+      <div class="agent-card" style="--ac:${d.color}">
         <div class="agent-name">${a.name}</div>
         <div class="agent-badges">${a.tags.map(t=>{
           if(t==='BBB') return '<span class="abadge abadge-bbb">BBB</span>';
