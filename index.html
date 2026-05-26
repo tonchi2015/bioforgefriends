@@ -297,8 +297,8 @@ body{padding-bottom:70px}
       <span class="header-badge" style="flex:1;text-align:center;white-space:nowrap">ChEMBL 36 validated</span>
     </div>
     <span class="header-badge" id="updatedBadge" style="text-align:center;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;gap:7px">
-      <span id="agentDot" style="display:none;width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 1.4s infinite"></span>
-      <span id="updatedText">Updated —</span>
+      <span id="agentDot" style="width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 2.4s infinite;opacity:0.7"></span>
+      <span id="updatedText" style="font-size:0.78rem">Live · loading…</span>
     </span>
   </div>
 </header>
@@ -613,9 +613,30 @@ const DISEASE_NAMES = {
 };
 function diseaseName(d){ return DISEASE_NAMES[(d||'').toLowerCase()] || d.replace(/\b\w/g,c=>c.toUpperCase()); }
 
-let _all = [], _lastUpdated = '';
+let _all = [], _lastUpdated = '', _lastUpdatedDate = null;
 let _visibleData = [], _renderOffset = 0, _gridObs = null;
 const _PAGE = 40;
+
+function _relTime(date){
+  if(!date) return '—';
+  const diff=Math.floor((Date.now()-date.getTime())/1000);
+  if(diff<60)  return 'just now';
+  if(diff<3600) return Math.floor(diff/60)+'m ago';
+  if(diff<86400) return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+function _setUpdatedText(synced){
+  const dot=document.getElementById('agentDot');
+  const txt=document.getElementById('updatedText');
+  if(!txt) return;
+  txt.textContent='Live · '+(_lastUpdatedDate?_relTime(_lastUpdatedDate):'loading…');
+  if(synced && dot){
+    dot.style.opacity='1';
+    dot.style.animationDuration='0.7s';
+    setTimeout(()=>{ dot.style.opacity='0.7'; dot.style.animationDuration='2.4s'; },30000);
+  }
+}
+setInterval(()=>_setUpdatedText(false), 60000);
 
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -640,11 +661,9 @@ async function startPolling(){
         populateDiseaseFilter(_all);
         applyFilters();
         renderNew();
-        document.getElementById('updatedText').textContent='Updated '+new Date(latest).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-        const dot=document.getElementById('agentDot');
-        dot.style.display='inline-block';
+        _lastUpdatedDate=new Date(latest);
+        _setUpdatedText(true);
         showToast(`Agent synced — ${added?added+' new candidates':'data refreshed'}`);
-        setTimeout(()=>{ dot.style.display='none'; },30000);
       }
     }catch(e){}
   },5*60*1000);
@@ -924,7 +943,8 @@ async function load(){
     const latest=_all.map(m=>m.updated_at).filter(Boolean).sort().pop();
     if(latest){
       _lastUpdated=latest;
-      document.getElementById('updatedText').textContent='Updated '+new Date(latest).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      _lastUpdatedDate=new Date(latest);
+      _setUpdatedText(false);
     }
     populateDiseaseFilter(_all);
     applyFilters();
