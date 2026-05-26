@@ -177,7 +177,7 @@ footer strong{color:#1a5d7d}
   <div class="panel-body">
     <div class="value-card" id="panelValue"></div>
     <div class="psec"><div class="psec-title">Scoring Profile</div><div class="rings" id="panelRings"></div></div>
-    <div class="psec" id="panelPcWrap" style="display:none"><div class="psec-title">Pan-Cancer Targets</div><div class="pc-target-grid" id="panelPcTargets"></div></div>
+    <div class="psec" id="panelPcWrap" style="display:none"><div class="psec-title">Pan-Cancer Coverage</div><div id="panelPcTargets"></div></div>
     <div class="psec"><div class="psec-title">Benchmarking vs Standard of Care</div><div id="panelCmp"></div></div>
     <div class="psec"><div class="psec-title">Safety &amp; Drug-likeness</div><div class="safety-grid" id="panelSafety"></div></div>
     <div class="psec"><div class="psec-title">Scientific Context</div><p id="panelNote" style="font-size:0.82rem;color:#3a5a72;line-height:1.7"></p></div>
@@ -258,12 +258,12 @@ function getDrugRevenue(d){
 // Professional disease name mapping
 const DISEASE_NAMES = {
   'cancer':                          'Carcinoma — General',
-  'ramacl pancancer':                'Pan-Cancer — RAMACL Target',
-  'gpr139 pancancer':                'Pan-Cancer — GPR139 Target',
-  'or2d3 pancancer':                 'Pan-Cancer — OR2D3 Target',
-  'ggta1 pancancer':                 'Pan-Cancer — GGTA1 (Xenoantigen)',
-  'pancancer histone':               'Pan-Cancer — Histone Modification (H2BC13)',
-  'pd1_pdl1 pancancer':              'Pan-Cancer — PD-1/PD-L1 Checkpoint',
+  'ramacl pancancer':                'Pan-Cancer · 50+ cancer types',
+  'gpr139 pancancer':                'Pan-Cancer · 50+ cancer types',
+  'or2d3 pancancer':                 'Pan-Cancer · 50+ cancer types',
+  'ggta1 pancancer':                 'Pan-Cancer · 50+ cancer types',
+  'pancancer histone':               'Pan-Cancer · 50+ cancer types',
+  'pd1_pdl1 pancancer':              'Pan-Cancer · 50+ cancer types',
   'pc stomach cancer':               'Gastric Carcinoma',
   'pc endometrial cancer':           'Endometrial Carcinoma',
   'pc lung cancer':                  'Pulmonary Carcinoma (NSCLC)',
@@ -429,11 +429,6 @@ function renderCard(m){
 }
 
 // ── Panel ─────────────────────────────────────────────────────────
-const PC_TARGETS = [
-  {name:'GGTA1', role:'Xenoantigen blocker\nAbsent in healthy tissue\n96% cancer coverage'},
-  {name:'H2BC13', role:'Histone modifier\nEpigenetic cancer marker\nChromatin remodeling'},
-  {name:'PD-1 · PD-L1', role:'Checkpoint inhibitor\nImmune evasion blocker\nKeytruda-class target'},
-];
 
 function openPanel(id){
   const m=_all.find(x=>x.id===id); if(!m) return;
@@ -473,15 +468,16 @@ function openPanel(id){
     ring(syn,'Synthesizability',sc(syn))+
     ring(ts,'Total',sc(ts));
 
-  // Pancancer targets
+  // Pancancer coverage
   const pcWrap=document.getElementById('panelPcWrap');
   if(isPC){
     pcWrap.style.display='';
-    document.getElementById('panelPcTargets').innerHTML=PC_TARGETS.map(t=>`
-      <div class="pc-target">
-        <div class="pc-target-name">${t.name}</div>
-        <div class="pc-target-role" style="white-space:pre-line">${t.role}</div>
-      </div>`).join('');
+    document.getElementById('panelPcTargets').innerHTML=`
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="safety-pill"><div class="safety-icon">&#127758;</div><div class="safety-text">50+ Cancer Types<small>Broad-spectrum coverage</small></div></div>
+        <div class="safety-pill"><div class="safety-icon">&#128300;</div><div class="safety-text">Multi-Target Strategy<small>Proprietary target selection</small></div></div>
+        <div class="safety-pill"><div class="safety-icon">&#128274;</div><div class="safety-text">Confidential Targets<small>IP-protected research</small></div></div>
+      </div>`;
   } else { pcWrap.style.display='none'; }
 
   // Comparison (stacked bar rows, no table)
