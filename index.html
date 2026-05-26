@@ -860,72 +860,92 @@ function renderNew(){
   grid.innerHTML=recent.map(renderCard).join('');
 }
 
+// ── Domain SVG icons ──
+const DSVG={
+  onco:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="3" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="21" y2="12"/>',
+  hema:'<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
+  rheu:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  derm:'<rect x="2" y="3" width="20" height="5" rx="2"/><rect x="2" y="10" width="20" height="5" rx="2"/><rect x="2" y="17" width="20" height="5" rx="2"/>',
+  neph:'<path d="M12 2a6 6 0 0 0-6 6c0 4 3 8 6 12 3-4 6-8 6-12a6 6 0 0 0-6-6z"/>',
+  gast:'<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  pulm:'<path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>',
+  aut: '<path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.44-4.54zm5 0a2.5 2.5 0 0 0-1 4.8 2.5 2.5 0 0 0 1.44 4.54 3 3 0 0 0-.34 5.58 2.5 2.5 0 0 0-2.96 3.08A2.5 2.5 0 0 0 12 19.5v-15A2.5 2.5 0 0 0 14.5 2z"/>',
+  neuro:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  infect:'<circle cx="12" cy="12" r="4"/><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/>',
+  endo:'<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/>',
+  opht:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+  gyn: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+};
+function dsvg(k,color){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${DSVG[k]}</svg>`;}
+
+function hexRgb(hex,a){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);return `rgba(${r},${g},${b},${a})`;}
+
 // ── Agents data ──
 const AGENTS=[
-  {domain:'Онкологија',icon:'🧬',color:'#c0392b',list:[
-    {name:'Glioblastoma (GBM)',tags:['BBB'],targets:['EGFR','IDH1','mTOR']},
-    {name:'CLL',tags:[],targets:['BCL-2','BTK','PI3K-δ']},
-    {name:'Breast Cancer',tags:[],targets:['ESR1','HER2','PARP','CDK4/6']},
-    {name:'Pancreatic PDAC',tags:[],targets:['KRAS','MEK','IDO1']},
-    {name:'General Cancer',tags:[],targets:['PD-1','PD-L1','IDO1']},
+  {domain:'Онкологија',svg:'onco',color:'#c0392b',list:[
+    {name:'Glioblastoma (GBM)',tags:['BBB'],targets:['EGFR','IDH1','mTOR'],desc:'Aggressive primary brain tumor driven by EGFR amplification and IDH mutations with dismal prognosis.'},
+    {name:'CLL',tags:[],targets:['BCL-2','BTK','PI3K-δ'],desc:'B-cell malignancy reliant on BCR signaling and BCL-2-mediated evasion of apoptosis.'},
+    {name:'Breast Cancer',tags:[],targets:['ESR1','HER2','PARP','CDK4/6'],desc:'Hormone receptor and HER2-driven proliferation with PARP-dependent DNA repair vulnerability.'},
+    {name:'Pancreatic PDAC',tags:[],targets:['KRAS','MEK','IDO1'],desc:'Highly aggressive adenocarcinoma with near-universal KRAS mutation and immunosuppressive tumor microenvironment.'},
+    {name:'General Cancer',tags:[],targets:['PD-1','PD-L1','IDO1'],desc:'Immune checkpoint evasion via PD-1/PD-L1 axis exploited across multiple solid tumor types.'},
   ]},
-  {domain:'Хематологија',icon:'🩸',color:'#e74c3c',list:[
-    {name:'Anemia (EPO/PHD2)',tags:['⚠'],targets:['PHD2','HIF-2α','EPO-R']},
-    {name:'Thrombosis',tags:['⚠'],targets:['Xa','Thrombin','PAR1']},
-    {name:'Leukemia AML/CML',tags:[],targets:['BCR-ABL','FLT3','MCL-1']},
+  {domain:'Хематологија',svg:'hema',color:'#e74c3c',list:[
+    {name:'Anemia (EPO/PHD2)',tags:['⚠'],targets:['PHD2','HIF-2α','EPO-R'],desc:'PHD2 inhibition stabilizes HIF-2α to upregulate erythropoietin and restore red blood cell production.'},
+    {name:'Thrombosis',tags:['⚠'],targets:['Xa','Thrombin','PAR1'],desc:'Coagulation cascade overactivation via Factor Xa and thrombin leading to pathological clot formation.'},
+    {name:'Leukemia AML/CML',tags:[],targets:['BCR-ABL','FLT3','MCL-1'],desc:'BCR-ABL fusion oncogene drives myeloid proliferation; FLT3 mutation confers adverse prognosis in AML.'},
   ]},
-  {domain:'Ревматологија',icon:'💊',color:'#8e44ad',list:[
-    {name:'Rheumatoid Arthritis',tags:[],targets:['TNF','IL-6','JAK1']},
-    {name:'Psoriatic Arthritis',tags:[],targets:['IL-17','IL-23','TYK2']},
-    {name:'SLE',tags:['⚠'],targets:['IFN-α','BTK','TLR7']},
+  {domain:'Ревматологија',svg:'rheu',color:'#8e44ad',list:[
+    {name:'Rheumatoid Arthritis',tags:[],targets:['TNF','IL-6','JAK1'],desc:'Chronic synovial inflammation sustained by TNF and IL-6 cytokine amplification loops.'},
+    {name:'Psoriatic Arthritis',tags:[],targets:['IL-17','IL-23','TYK2'],desc:'IL-17/IL-23 axis drives concurrent joint inflammation and epidermal plaque formation.'},
+    {name:'SLE',tags:['⚠'],targets:['IFN-α','BTK','TLR7'],desc:'Type I interferon signature and B-cell hyperactivation underlie multi-organ autoimmune destruction.'},
   ]},
-  {domain:'Дерматологија',icon:'🌿',color:'#f39c12',list:[
-    {name:'Psoriasis',tags:[],targets:['IL-17','IL-23','TYK2']},
-    {name:'Atopic Dermatitis',tags:[],targets:['IL-4R','TSLP','JAK1']},
+  {domain:'Дерматологија',svg:'derm',color:'#f39c12',list:[
+    {name:'Psoriasis',tags:[],targets:['IL-17','IL-23','TYK2'],desc:'Keratinocyte hyperproliferation driven by IL-17/IL-23 immune dysregulation and TYK2 signaling.'},
+    {name:'Atopic Dermatitis',tags:[],targets:['IL-4R','TSLP','JAK1'],desc:'Th2-skewed epithelial inflammation mediated by IL-4R and TSLP barrier-derived cytokine signaling.'},
   ]},
-  {domain:'Нефрологија',icon:'💧',color:'#16a085',list:[
-    {name:'CKD / Renal Fibrosis',tags:[],targets:['TGF-β1','SMAD3','Nrf2']},
-    {name:'Diabetic Nephropathy',tags:[],targets:['RAGE','SGLT2','PKC-β']},
-    {name:'IgA Nephropathy',tags:[],targets:['APRIL','BAFF','TACI','C3']},
+  {domain:'Нефрологија',svg:'neph',color:'#16a085',list:[
+    {name:'CKD / Renal Fibrosis',tags:[],targets:['TGF-β1','SMAD3','Nrf2'],desc:'TGF-β1/SMAD3 pathway drives progressive glomerular and interstitial fibrosis leading to kidney failure.'},
+    {name:'Diabetic Nephropathy',tags:[],targets:['RAGE','SGLT2','PKC-β'],desc:'Hyperglycemia-induced RAGE and PKC-β activation causes endothelial dysfunction and glomerulosclerosis.'},
+    {name:'IgA Nephropathy',tags:[],targets:['APRIL','BAFF','TACI','C3'],desc:'Galactose-deficient IgA1 immune complexes activate complement and trigger mesangial cell injury.'},
   ]},
-  {domain:'Гастроентерологија',icon:'🫁',color:'#27ae60',list:[
-    {name:'IBD (Crohn / UC)',tags:[],targets:['TNF','IL-23','JAK1']},
-    {name:'Celiac Disease',tags:[],targets:['tTG2','IL-15','NF-κB']},
+  {domain:'Гастроентерологија',svg:'gast',color:'#27ae60',list:[
+    {name:'IBD (Crohn / UC)',tags:[],targets:['TNF','IL-23','JAK1'],desc:'Dysregulated mucosal immunity with TNF and IL-23 sustaining chronic transmural intestinal inflammation.'},
+    {name:'Celiac Disease',tags:[],targets:['tTG2','IL-15','NF-κB'],desc:'tTG2-mediated gliadin deamidation triggers HLA-DQ2/DQ8-restricted T-cell mucosal response.'},
   ]},
-  {domain:'Пулмологија',icon:'🫧',color:'#2980b9',list:[
-    {name:'IPF',tags:['⚠'],targets:['TGF-β1','Autotaxin']},
-    {name:'Asthma / COPD',tags:[],targets:['TSLP','IL-5','PDE4']},
+  {domain:'Пулмологија',svg:'pulm',color:'#2980b9',list:[
+    {name:'IPF',tags:['⚠'],targets:['TGF-β1','Autotaxin'],desc:'Progressive pulmonary fibrosis driven by TGF-β1 and autotaxin-derived lysophosphatidic acid signaling.'},
+    {name:'Asthma / COPD',tags:[],targets:['TSLP','IL-5','PDE4'],desc:'Airway hyperreactivity and eosinophilic inflammation mediated by TSLP, IL-5, and elevated PDE4 activity.'},
   ]},
-  {domain:'Аутизам',icon:'🧠',color:'#8e44ad',list:[
-    {name:'Prenatal (LogPS>-1.0)',tags:['⚠','PlacBBB'],targets:['IL-6','JAK1','Nrf2']},
-    {name:'Postnatal (BBB/GABA)',tags:['BBB'],targets:['GABA-A','GABA-B','mGluR5']},
+  {domain:'Аутизам',svg:'aut',color:'#7c3aed',list:[
+    {name:'Prenatal (LogPS>-1.0)',tags:['⚠','PlacBBB'],targets:['IL-6','JAK1','Nrf2'],desc:'Maternal immune activation via IL-6/JAK1 alters fetal neurodevelopment; placental penetration required.'},
+    {name:'Postnatal (BBB/GABA)',tags:['BBB'],targets:['GABA-A','GABA-B','mGluR5'],desc:'GABAergic inhibitory-excitatory imbalance and mGluR5 dysregulation contribute to ASD behavioral phenotype.'},
   ]},
-  {domain:'Невродегенеративни',icon:'⚡',color:'#1a5d7d',list:[
-    {name:'Neurodegenerative',tags:['BBB'],targets:['BACE1','GSK3β','NLRP3']},
-    {name:'Parkinson',tags:['BBB'],targets:['LRRK2','α-syn','MAO-B']},
-    {name:'Stroke',tags:['⚠','BBB'],targets:['NMDA','MMP-9']},
+  {domain:'Невродегенеративни',svg:'neuro',color:'#1a5d7d',list:[
+    {name:'Neurodegenerative',tags:['BBB'],targets:['BACE1','GSK3β','NLRP3'],desc:'BACE1-driven amyloid processing, tau hyperphosphorylation via GSK3β, and NLRP3 neuroinflammation.'},
+    {name:'Parkinson',tags:['BBB'],targets:['LRRK2','α-syn','MAO-B'],desc:'LRRK2 kinase hyperactivity and α-synuclein aggregation drive dopaminergic nigrostriatal neurodegeneration.'},
+    {name:'Stroke',tags:['⚠','BBB'],targets:['NMDA','MMP-9'],desc:'NMDA receptor excitotoxicity and MMP-9-mediated BBB disruption cause ischemic neuronal death.'},
   ]},
-  {domain:'Инфективни болести',icon:'🦠',color:'#7f8c8d',list:[
-    {name:'HIV-1',tags:['⚠'],targets:['PR','RT','Integrase','gp120']},
-    {name:'Hepatitis B (HBV)',tags:[],targets:['HBV-Pol','cccDNA','HBsAg']},
-    {name:'Hepatitis C (HCV)',tags:[],targets:['NS3/4A','NS5A','NS5B']},
-    {name:'Malaria',tags:[],targets:['PfATP4','DHODH','PfDHFR']},
-    {name:'Tuberculosis (TB)',tags:[],targets:['InhA','DprE1','MmpL3']},
+  {domain:'Инфективни болести',svg:'infect',color:'#7f8c8d',list:[
+    {name:'HIV-1',tags:['⚠'],targets:['PR','RT','Integrase','gp120'],desc:'Multi-target approach simultaneously blocking protease, reverse transcriptase, integrase, and viral entry.'},
+    {name:'Hepatitis B (HBV)',tags:[],targets:['HBV-Pol','cccDNA','HBsAg'],desc:'Suppression of viral polymerase and elimination of cccDNA reservoir for functional cure.'},
+    {name:'Hepatitis C (HCV)',tags:[],targets:['NS3/4A','NS5A','NS5B'],desc:'Pan-genotypic direct-acting antiviral strategy targeting NS3/4A protease and replication complex.'},
+    {name:'Malaria',tags:[],targets:['PfATP4','DHODH','PfDHFR'],desc:'Disruption of P. falciparum ion homeostasis, pyrimidine biosynthesis, and folate metabolism.'},
+    {name:'Tuberculosis (TB)',tags:[],targets:['InhA','DprE1','MmpL3'],desc:'Targeting mycolic acid biosynthesis, arabinogalactan synthesis, and lipid transport in M. tuberculosis.'},
   ]},
-  {domain:'Ендокринологија',icon:'⚗️',color:'#e67e22',list:[
-    {name:'Diabetes T1 (β-cell)',tags:[],targets:['GAD65','IA-2','IL-10','FOXP3']},
-    {name:'Hashimoto',tags:[],targets:['TPO','Tg','JAK1']},
-    {name:"Graves' Disease",tags:[],targets:['TSHR','IGF-1R','TRAb']},
-    {name:'Osteoporosis',tags:[],targets:['RANKL','CatK','Src']},
-    {name:'PCOS',tags:['⚠'],targets:['INSR','GLP-1R','AR']},
+  {domain:'Ендокринологија',svg:'endo',color:'#e67e22',list:[
+    {name:'Diabetes T1 (β-cell)',tags:[],targets:['GAD65','IA-2','IL-10','FOXP3'],desc:'Autoimmune β-cell destruction mediated by GAD65/IA-2 autoreactive T-cells with regulatory impairment.'},
+    {name:'Hashimoto',tags:[],targets:['TPO','Tg','JAK1'],desc:'Thyroid peroxidase autoantibodies and JAK1-driven inflammation cause progressive hypothyroidism.'},
+    {name:"Graves' Disease",tags:[],targets:['TSHR','IGF-1R','TRAb'],desc:'TSHR-stimulating autoantibodies cause hyperthyroidism, orbitopathy, and thyroid hyperplasia.'},
+    {name:'Osteoporosis',tags:[],targets:['RANKL','CatK','Src'],desc:'RANKL-driven osteoclast activation leads to bone mineral density loss exceeding osteoblast formation.'},
+    {name:'PCOS',tags:['⚠'],targets:['INSR','GLP-1R','AR'],desc:'Insulin resistance, androgen excess, and GLP-1R metabolic dysfunction drive ovarian dysfunction.'},
   ]},
-  {domain:'Офталмологија',icon:'👁',color:'#2980b9',list:[
-    {name:'Diabetic Retinopathy',tags:[],targets:['VEGFR2','PKC-β','Tie2']},
-    {name:'Glaucoma',tags:[],targets:['ROCK1','ROCK2','IOP']},
-    {name:'AMD',tags:[],targets:['VEGFR','PDGFR','C3/C5']},
+  {domain:'Офталмологија',svg:'opht',color:'#0369a1',list:[
+    {name:'Diabetic Retinopathy',tags:[],targets:['VEGFR2','PKC-β','Tie2'],desc:'VEGFR2 and PKC-β drive pathological retinal neovascularization and vascular permeability.'},
+    {name:'Glaucoma',tags:[],targets:['ROCK1','ROCK2','IOP'],desc:'ROCK1/2 kinase inhibition reduces intraocular pressure by relaxing trabecular meshwork tone.'},
+    {name:'AMD',tags:[],targets:['VEGFR','PDGFR','C3/C5'],desc:'Complement and VEGF-driven choroidal neovascularization causes progressive macular photoreceptor loss.'},
   ]},
-  {domain:'Гинекологија',icon:'🌸',color:'#e91e8c',list:[
-    {name:'Endometriosis',tags:['⚠'],targets:['GnRH-R','JAK1','TNF-α']},
+  {domain:'Гинекологија',svg:'gyn',color:'#be185d',list:[
+    {name:'Endometriosis',tags:['⚠'],targets:['GnRH-R','JAK1','TNF-α'],desc:'Ectopic endometrial implants respond to estrogen with JAK1-mediated peritoneal inflammatory cascade.'},
   ]},
 ];
 
@@ -933,7 +953,7 @@ function renderAgents(){
   const sel=document.getElementById('agentDomain');
   AGENTS.forEach(d=>{
     const o=document.createElement('option');
-    o.value=d.domain; o.textContent=d.icon+' '+d.domain;
+    o.value=d.domain; o.textContent=d.domain;
     sel.appendChild(o);
   });
   filterAgents();
@@ -947,22 +967,23 @@ function filterAgents(){
     if(dom && d.domain!==dom) return '';
     const cards=d.list.filter(a=>{
       if(!q) return true;
-      return a.name.toLowerCase().includes(q)||a.targets.some(t=>t.toLowerCase().includes(q));
+      return a.name.toLowerCase().includes(q)||a.targets.some(t=>t.toLowerCase().includes(q))||a.desc.toLowerCase().includes(q);
     });
     if(!cards.length) return '';
     total+=cards.length;
     const cardsHtml=cards.map(a=>`
-      <div class="agent-card" style="--ac:${d.color}">
+      <div class="agent-card" style="--ac:${d.color};background:${hexRgb(d.color,0.05)}">
         <div class="agent-name">${a.name}</div>
         <div class="agent-badges">${a.tags.map(t=>{
           if(t==='BBB') return '<span class="abadge abadge-bbb">BBB</span>';
           if(t==='PlacBBB') return '<span class="abadge abadge-plac">PlacBBB</span>';
-          if(t==='⚠') return '<span class="abadge abadge-warn">⚠ High attention</span>';
+          if(t==='⚠') return '<span class="abadge abadge-warn">⚠ Attention</span>';
           return '';
         }).join('')}</div>
+        <div style="font-size:0.69rem;color:#5a7a90;line-height:1.5;margin-bottom:8px">${a.desc}</div>
         <div class="agent-targets">${a.targets.map(t=>`<span class="agent-target">${t}</span>`).join('')}</div>
       </div>`).join('');
-    return `<div class="agent-domain-hdr">${d.icon} ${d.domain}</div><div class="agents-grid">${cardsHtml}</div>`;
+    return `<div class="agent-domain-hdr">${dsvg(d.svg,d.color)} ${d.domain}</div><div class="agents-grid">${cardsHtml}</div>`;
   }).join('');
   document.getElementById('agentsWrap').innerHTML=html||'<p style="padding:40px;text-align:center;color:#aabfce">No agents match.</p>';
   document.getElementById('agentCount').textContent=`${total} agents`;
