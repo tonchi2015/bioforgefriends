@@ -1,0 +1,20 @@
+{
+  "name": "BioForge Drug Candidates",
+  "short_name": "BioForge",
+  "description": "AI-generated therapeutic molecule candidates across 34 disease areas",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a2540",
+  "theme_color": "#0a2540",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["medical", "science"],
+  "lang": "en"
+}
