@@ -227,9 +227,9 @@ footer strong{color:#1a5d7d}
     </div>
   </div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:280px">
-    <div style="display:flex;gap:8px;justify-content:center">
-      <span class="header-badge">BioForge GME v2.0</span>
-      <span class="header-badge">ChEMBL 36 validated</span>
+    <div style="display:flex;gap:8px;width:100%">
+      <span class="header-badge" style="flex:1;text-align:center">BioForge GME v2.0</span>
+      <span class="header-badge" style="flex:1;text-align:center">ChEMBL 36 validated</span>
     </div>
     <span class="header-badge" id="updatedBadge" style="width:100%;text-align:center;background:rgba(255,255,255,0.08)">Updated &mdash;</span>
   </div>
@@ -527,11 +527,16 @@ function openPanel(id){
   document.getElementById('panelId').textContent=m.name;
   document.getElementById('panelName').textContent=diseaseName(m.disease||'Unknown');
 
+  const svgLeaf='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+  const svgTarget='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>';
+  const svgWave='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
+  const svgBar='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>';
+  const svgCheck='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
   const tags=[
-    isPC?'&#127758; Pan-Cancer':isOncology?'&#127988; Oncology':'&#128138; CNS',
-    `&#128200; Score ${Math.round(ts*100)}%`,
-    '&#9989; Pre-clinical',
-    isPC?'&#127758; 53 Cancer Types':'',
+    isPC?svgLeaf+'Pan-Cancer':isOncology?svgTarget+'Oncology':svgWave+'CNS',
+    svgBar+`Score ${Math.round(ts*100)}%`,
+    svgCheck+'Pre-clinical',
+    isPC?svgLeaf+'53 Cancer Types':'',
   ].filter(Boolean);
   document.getElementById('panelTags').innerHTML=tags.map(t=>`<span class="panel-tag">${t}</span>`).join('');
 
@@ -539,7 +544,7 @@ function openPanel(id){
   const dr = getDrugRevenue(m.disease);
   const friendAnnual = dr.revenue * 0.03 * FRIEND_SHARE;
   document.getElementById('panelValue').innerHTML=`
-    <div class="value-title">Revenue Projection — Based on Comparable Drug</div>
+    <div class="value-title">Revenue Projection<br><span style="font-weight:500;opacity:0.8">Based on Comparable Drug</span></div>
     <div class="value-row"><span class="value-lbl">Reference: ${dr.ref}</span><span class="value-num">${fmtMoney(dr.revenue)}/yr</span></div>
     <div class="value-row"><span class="value-lbl">Your annual share (0.2%)</span><span class="value-num big">${fmtMoney(friendAnnual)}/yr</span></div>
     <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);margin-top:10px">* Projection based on comparable approved drug revenue. Subject to clinical development and market conditions.</div>`;
