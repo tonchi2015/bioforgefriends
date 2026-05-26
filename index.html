@@ -250,6 +250,90 @@ function getDrugRevenue(d){
   return DRUG_REVENUE.default;
 }
 
+// Professional disease name mapping
+const DISEASE_NAMES = {
+  'cancer':                          'Carcinoma — General',
+  'ramacl pancancer':                'Pan-Cancer — RAMACL Target',
+  'gpr139 pancancer':                'Pan-Cancer — GPR139 Target',
+  'or2d3 pancancer':                 'Pan-Cancer — OR2D3 Target',
+  'ggta1 pancancer':                 'Pan-Cancer — GGTA1 (Xenoantigen)',
+  'pancancer histone':               'Pan-Cancer — Histone Modification (H2BC13)',
+  'pd1_pdl1 pancancer':              'Pan-Cancer — PD-1/PD-L1 Checkpoint',
+  'pc stomach cancer':               'Gastric Carcinoma',
+  'pc endometrial cancer':           'Endometrial Carcinoma',
+  'pc lung cancer':                  'Pulmonary Carcinoma (NSCLC)',
+  'pc ovarian cancer':               'Ovarian Carcinoma',
+  'pc skin cancer':                  'Cutaneous Carcinoma',
+  'pc prostate cancer':              'Prostate Adenocarcinoma',
+  'pc head and neck cancer':         'Head & Neck Carcinoma',
+  'pc colorectal cancer':            'Colorectal Carcinoma',
+  'pc cervical cancer':              'Cervical Carcinoma',
+  'pc melanoma':                     'Malignant Melanoma',
+  'pc thyroid cancer':               'Thyroid Carcinoma',
+  'pc renal cancer':                 'Renal Cell Carcinoma (RCC)',
+  'pc diffuse large bcell lymphoma': 'Diffuse Large B-Cell Lymphoma (DLBCL)',
+  'pc colon adenocarcinoma':         'Colon Adenocarcinoma',
+  'pc sarcoma':                      'Soft Tissue Sarcoma',
+  'pc uterine carcinosarcoma':       'Uterine Carcinosarcoma',
+  'pc leukemia aml':                 'Acute Myeloid Leukemia (AML)',
+  'pc urothelial cancer':            'Urothelial Carcinoma (Bladder)',
+  'pc testis cancer':                'Testicular Carcinoma',
+  'pc breast cancer tcga':           'Breast Carcinoma (TCGA)',
+  'pc glioblastoma':                 'Glioblastoma Multiforme — Pan-Cancer',
+  'pc pancreatic cancer':            'Pancreatic Adenocarcinoma',
+  'pc carcinoid':                    'Carcinoid Tumor (Neuroendocrine)',
+  'pc liver cancer':                 'Hepatocellular Carcinoma (HCC)',
+  'pc head neck squamous':           'Head & Neck Squamous Cell Carcinoma',
+  'pc lymphoma':                     'Non-Hodgkin Lymphoma',
+  'pc glioma':                       'Glioma',
+  'pc esophageal cancer':            'Esophageal Carcinoma',
+  'pc testicular germ cell tumor':   'Testicular Germ Cell Tumor',
+  'pc thymoma':                      'Thymoma',
+  'breast cancer':                   'Breast Carcinoma',
+  'glioblastoma':                    'Glioblastoma Multiforme (GBM)',
+  'pancreatic cancer':               'Pancreatic Adenocarcinoma',
+  'cll':                             'Chronic Lymphocytic Leukemia (CLL)',
+  'hema leukemia':                   'Hematologic Malignancy — Leukemia',
+  'parp nextgen':                    'PARP Inhibitor — Next Generation',
+  'jak selective':                   'JAK-Selective Inhibitor Target',
+  'cdk46':                           'CDK4/6 Inhibitor Target',
+  'kras g12c':                       'KRAS G12C Mutant Carcinoma',
+  'autoimmune':                      'Autoimmune Disorders',
+  'thyroid autoimmune':              'Autoimmune Thyroiditis (Hashimoto\'s)',
+  'multiple sclerosis':              'Multiple Sclerosis (MS)',
+  'neurodegenerative':               'Neurodegenerative Disorders',
+  'parkinson':                       'Parkinson\'s Disease',
+  'stroke':                          'Cerebrovascular Accident (Stroke)',
+  'type 2 diabetes':                 'Type 2 Diabetes Mellitus (T2DM)',
+  'type 1 diabetes':                 'Type 1 Diabetes Mellitus (T1DM)',
+  'diabetic complications':          'Diabetic Complications',
+  'metabolic':                       'Metabolic Syndrome',
+  'cardiovascular':                  'Cardiovascular Disease',
+  'fibrosis':                        'Pulmonary / Hepatic Fibrosis',
+  'liver':                           'Hepatic Disorders',
+  'kidney':                          'Renal Disorders',
+  'kidney stones':                   'Nephrolithiasis',
+  'lung':                            'Pulmonary Disorders',
+  'blood':                           'Hematologic Disorders',
+  'bone joint':                      'Osteoarthritis / Rheumatology',
+  'muscle sarcopenia':               'Sarcopenia / Muscle Wasting',
+  'gut microbiome':                  'Gut Microbiome Dysbiosis',
+  'eye':                             'Ophthalmologic Disorders',
+  'immunodeficiency':                'Primary Immunodeficiency',
+  'rare disease':                    'Rare / Orphan Diseases',
+  'infectious':                      'Infectious Disease',
+  'mental health':                   'Psychiatric / Mental Health Disorders',
+  'autism':                          'Autism Spectrum Disorder (ASD)',
+  'pain':                            'Chronic Pain Management',
+  'hormones':                        'Endocrine Disorders',
+  'reproductive':                    'Reproductive Medicine',
+  'skin wound':                      'Dermal Wound Healing',
+  'gallstones':                      'Cholelithiasis',
+  'aging':                           'Cellular Senescence / Anti-Aging',
+  'prevention':                      'Disease Prevention',
+};
+function diseaseName(d){ return DISEASE_NAMES[(d||'').toLowerCase()] || d.replace(/\b\w/g,c=>c.toUpperCase()); }
+
 let _all = [];
 
 const USERS = {
@@ -320,7 +404,7 @@ function renderCard(m){
   return `
   <div class="card ${tag}" onclick="openPanel(${m.id})">
     <div class="card-id">${m.name}</div>
-    <div class="card-name">${(m.disease||'Unknown').replace(/\b\w/g,c=>c.toUpperCase())}</div>
+    <div class="card-name">${diseaseName(m.disease||'Unknown')}</div>
     <span class="card-disease">${label}</span>
     <div class="total-score"><span>Total Score</span><span>${ts.toFixed(3)}</span></div>
     <div class="scores">
@@ -348,7 +432,7 @@ function openPanel(id){
   const cmp=getCmp(m.disease);
 
   document.getElementById('panelId').textContent=m.name;
-  document.getElementById('panelName').textContent=(m.disease||'Unknown').replace(/\b\w/g,c=>c.toUpperCase());
+  document.getElementById('panelName').textContent=diseaseName(m.disease||'Unknown');
 
   const tags=[
     isPC?'&#127758; Pan-Cancer':isOncology?'&#127988; Oncology':'&#128138; CNS',
@@ -436,7 +520,7 @@ function populateDiseaseFilter(data){
   const sel=document.getElementById('filterDisease');
   [...new Set(data.map(m=>m.disease).filter(Boolean))].sort().forEach(d=>{
     const o=document.createElement('option');
-    o.value=d; o.textContent=d.replace(/\b\w/g,c=>c.toUpperCase());
+    o.value=d; o.textContent=diseaseName(d);
     sel.appendChild(o);
   });
 }
