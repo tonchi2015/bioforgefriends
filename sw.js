@@ -1,4 +1,4 @@
-const CACHE = 'bioforge-v1';
+const CACHE = 'bioforge-v2';
 const STATIC = ['/', '/index.html', '/logo.svg', '/manifest.json'];
 
 self.addEventListener('install', e => {

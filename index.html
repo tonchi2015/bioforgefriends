@@ -615,7 +615,7 @@ function diseaseName(d){ return DISEASE_NAMES[(d||'').toLowerCase()] || d.replac
 
 let _all = [], _lastUpdated = '', _lastUpdatedDate = null;
 let _visibleData = [], _renderOffset = 0, _gridObs = null;
-const _PAGE = 40;
+const _PAGE = 10;
 
 function _relTime(date){
   if(!date) return '—';
@@ -979,8 +979,11 @@ function showTab(name){
     document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle('active',t===name);
     document.getElementById('btn-'+t).classList.toggle('active',t===name);
   });
-  if(name==='home') window.scrollTo({top:0,behavior:'smooth'});
-  if(name==='agents' && !document.getElementById('agentsWrap').children.length) renderAgents();
+  window.scrollTo(0,0);
+  if(name==='agents'){
+    if(!document.getElementById('agentsWrap').children.length) renderAgents();
+    closeAgentResults();
+  }
   if(name==='new' && !document.getElementById('gridNew').querySelector('.card')) renderNew();
 }
 
@@ -1116,8 +1119,7 @@ function openAgentCandidates(di, ai){
   });
   document.getElementById('agentBrowse').style.display='none';
   document.getElementById('agentResults').style.display='block';
-  document.getElementById('agentResultsTitle').innerHTML=
-    `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:6px;vertical-align:middle"></span>${agent.name}`;
+  document.getElementById('agentResultsTitle').textContent=agent.name;
   document.getElementById('agentResultsCount').textContent=`${matches.length} candidate${matches.length!==1?'s':''}`;
   const grid=document.getElementById('agentResultsGrid');
   grid.innerHTML=matches.length
