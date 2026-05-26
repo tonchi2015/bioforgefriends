@@ -910,11 +910,11 @@ const AGENTS=[
     {name:'Leukemia AML/CML',tags:[],targets:['BCR-ABL','FLT3','MCL-1'],desc:'BCR-ABL fusion oncogene drives myeloid proliferation; FLT3 mutation confers adverse prognosis in AML.'},
   ]},
   {domain:'Cardiology',svg:'card',color:'#dc2626',list:[
-    {name:'Heart Failure',tags:[],targets:['SGLT2','BNP','HIF-1α','RAAS'],desc:'Neurohumoral RAAS overactivation and HIF-1α-driven metabolic reprogramming cause progressive maladaptive ventricular remodeling.'},
-    {name:'Hypertension',tags:[],targets:['ACE2','AT1R','eNOS','ROCK1'],desc:'Angiotensin-II/AT1R signaling and eNOS uncoupling drive vascular smooth muscle hypercontraction and endothelial dysfunction.'},
-    {name:'Atherosclerosis',tags:[],targets:['PCSK9','LXR','NLRP3','IL-1β'],desc:'PCSK9-mediated LDL receptor degradation combined with NLRP3 inflammasome activation accelerates atherosclerotic plaque progression.'},
-    {name:'Atrial Fibrillation',tags:[],targets:['Nav1.5','Kv4.3','CaMKII'],desc:'Aberrant Nav1.5 and Kv4.3 ion channel kinetics with CaMKII-mediated calcium dysregulation sustain re-entrant arrhythmia circuits.'},
-    {name:'Myocardial Infarction',tags:['⚠'],targets:['cTnI','MMP-9','MPO','IL-6'],desc:'Ischemia-reperfusion injury driven by MPO oxidative burst and MMP-9 matrix degradation amplifies cardiomyocyte necrosis.'},
+    {name:'Heart Failure',tags:[],targets:['SGLT2','BNP','HIF-1α','RAAS'],desc:'Neurohumoral RAAS overactivation and HIF-1α-driven metabolic reprogramming cause progressive maladaptive ventricular remodeling.',match:['cardiovascular','cardiac']},
+    {name:'Hypertension',tags:[],targets:['ACE2','AT1R','eNOS','ROCK1'],desc:'Angiotensin-II/AT1R signaling and eNOS uncoupling drive vascular smooth muscle hypercontraction and endothelial dysfunction.',match:['cardiovascular','hypert']},
+    {name:'Atherosclerosis',tags:[],targets:['PCSK9','LXR','NLRP3','IL-1β'],desc:'PCSK9-mediated LDL receptor degradation combined with NLRP3 inflammasome activation accelerates atherosclerotic plaque progression.',match:['cardiovascular','pcsk9','lpa','athero']},
+    {name:'Atrial Fibrillation',tags:[],targets:['Nav1.5','Kv4.3','CaMKII'],desc:'Aberrant Nav1.5 and Kv4.3 ion channel kinetics with CaMKII-mediated calcium dysregulation sustain re-entrant arrhythmia circuits.',match:['cardiovascular','atrial','arrhythmia']},
+    {name:'Myocardial Infarction',tags:['⚠'],targets:['cTnI','MMP-9','MPO','IL-6'],desc:'Ischemia-reperfusion injury driven by MPO oxidative burst and MMP-9 matrix degradation amplifies cardiomyocyte necrosis.',match:['cardiac regeneration','cardiovascular','myocard']},
   ]},
   {domain:'Rheumatology',svg:'rheu',color:'#8e44ad',list:[
     {name:'Rheumatoid Arthritis',tags:[],targets:['TNF','IL-6','JAK1'],desc:'Chronic synovial inflammation sustained by TNF and IL-6 cytokine amplification loops.'},
@@ -983,8 +983,13 @@ function renderAgents(){
 
 function openAgentCandidates(di, ai){
   const d=AGENTS[di], agent=d.list[ai], color=d.color;
-  const raw=agent.name.toLowerCase().replace(/\(.*?\)/g,'').trim();
-  const keys=[raw, ...raw.split(/[\s\/\-]+/).filter(w=>w.length>3)];
+  let keys;
+  if(agent.match){
+    keys=agent.match;
+  } else {
+    const raw=agent.name.toLowerCase().replace(/\(.*?\)/g,'').trim();
+    keys=[raw, ...raw.split(/[\s\/\-]+/).filter(w=>w.length>3)];
+  }
   const matches=_all.filter(m=>{
     const dis=(m.disease||'').toLowerCase();
     return keys.some(k=>dis.includes(k));
