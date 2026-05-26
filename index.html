@@ -973,12 +973,13 @@ function renderAgents(){
   filterAgents();
 }
 
-function openAgentCandidates(agent, color){
+function openAgentCandidates(di, ai){
+  const d=AGENTS[di], agent=d.list[ai], color=d.color;
   const raw=agent.name.toLowerCase().replace(/\(.*?\)/g,'').trim();
   const keys=[raw, ...raw.split(/[\s\/\-]+/).filter(w=>w.length>3)];
   const matches=_all.filter(m=>{
-    const d=(m.disease||'').toLowerCase();
-    return keys.some(k=>d.includes(k));
+    const dis=(m.disease||'').toLowerCase();
+    return keys.some(k=>dis.includes(k));
   });
   document.getElementById('agentBrowse').style.display='none';
   document.getElementById('agentResults').style.display='block';
@@ -1000,16 +1001,16 @@ function filterAgents(){
   const q=(document.getElementById('agentSearch').value||'').toLowerCase();
   const dom=document.getElementById('agentDomain').value;
   let total=0;
-  const html=AGENTS.map(d=>{
+  const html=AGENTS.map((d,di)=>{
     if(dom && d.domain!==dom) return '';
-    const cards=d.list.filter(a=>{
+    const cards=d.list.map((a,ai)=>({a,ai})).filter(({a})=>{
       if(!q) return true;
       return a.name.toLowerCase().includes(q)||a.targets.some(t=>t.toLowerCase().includes(q))||a.desc.toLowerCase().includes(q);
     });
     if(!cards.length) return '';
     total+=cards.length;
-    const cardsHtml=cards.map(a=>`
-      <div class="agent-card" style="border-color:${hexRgb(d.color,0.3)};cursor:pointer" onclick="openAgentCandidates(${JSON.stringify(a)},${JSON.stringify(d.color)})">
+    const cardsHtml=cards.map(({a,ai})=>`
+      <div class="agent-card" style="border-color:${hexRgb(d.color,0.3)};cursor:pointer" onclick="openAgentCandidates(${di},${ai})">
         <div class="agent-name">${a.name}</div>
         <div class="agent-badges">${a.tags.map(t=>{
           if(t==='BBB') return '<span class="abadge abadge-bbb">BBB</span>';
