@@ -614,6 +614,8 @@ const DISEASE_NAMES = {
 function diseaseName(d){ return DISEASE_NAMES[(d||'').toLowerCase()] || d.replace(/\b\w/g,c=>c.toUpperCase()); }
 
 let _all = [], _lastUpdated = '';
+let _visibleData = [], _renderOffset = 0, _gridObs = null;
+const _PAGE = 40;
 
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -870,6 +872,25 @@ function populateDiseaseFilter(data){
   });
 }
 
+function _appendCards(grid){
+  const slice=_visibleData.slice(_renderOffset,_renderOffset+_PAGE);
+  if(!slice.length) return;
+  grid.insertAdjacentHTML('beforeend',slice.map(renderCard).join(''));
+  _renderOffset+=slice.length;
+  if(_renderOffset>=_visibleData.length) return;
+  // sentinel — triggers next batch when scrolled into view
+  const s=document.createElement('div');
+  s.style.cssText='height:1px;margin:0';
+  grid.appendChild(s);
+  _gridObs=new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting) return;
+    _gridObs.disconnect(); _gridObs=null;
+    s.remove();
+    _appendCards(grid);
+  },{rootMargin:'400px'});
+  _gridObs.observe(s);
+}
+
 function applyFilters(){
   const disease=document.getElementById('filterDisease').value;
   const sortBy=document.getElementById('sortBy').value;
@@ -882,8 +903,11 @@ function applyFilters(){
   data.sort((a,b)=>(b[sortBy]||0)-(a[sortBy]||0));
   document.getElementById('countLabel').textContent=`${data.length} candidates`;
   const grid=document.getElementById('grid');
+  if(_gridObs){ _gridObs.disconnect(); _gridObs=null; }
   if(!data.length){ grid.innerHTML=`<div class="empty"><h2>No candidates match</h2><p>Try lowering the minimum score.</p></div>`; return; }
-  grid.innerHTML=data.map(renderCard).join('');
+  _visibleData=data; _renderOffset=0;
+  grid.innerHTML='';
+  _appendCards(grid);
 }
 
 // ── Load ──────────────────────────────────────────────────────────
