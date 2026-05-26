@@ -889,6 +889,7 @@ const DSVG={
   endo:'<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/>',
   opht:'<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
   gyn: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  card:'<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><polyline points="8.5 12 10.5 10 12 14 13.5 11 15.5 12"/>',
 };
 function dsvg(k,color){return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${DSVG[k]}</svg>`;}
 
@@ -960,6 +961,13 @@ const AGENTS=[
   ]},
   {domain:'Gynecology',svg:'gyn',color:'#be185d',list:[
     {name:'Endometriosis',tags:['⚠'],targets:['GnRH-R','JAK1','TNF-α'],desc:'Ectopic endometrial implants respond to estrogen with JAK1-mediated peritoneal inflammatory cascade.'},
+  ]},
+  {domain:'Cardiology',svg:'card',color:'#dc2626',list:[
+    {name:'Heart Failure',tags:[],targets:['SGLT2','BNP','HIF-1α','RAAS'],desc:'Neurohumoral RAAS overactivation and HIF-1α-driven metabolic reprogramming cause progressive maladaptive ventricular remodeling.'},
+    {name:'Hypertension',tags:[],targets:['ACE2','AT1R','eNOS','ROCK1'],desc:'Angiotensin-II/AT1R signaling and eNOS uncoupling drive vascular smooth muscle hypercontraction and endothelial dysfunction.'},
+    {name:'Atherosclerosis',tags:[],targets:['PCSK9','LXR','NLRP3','IL-1β'],desc:'PCSK9-mediated LDL receptor degradation combined with NLRP3 inflammasome activation accelerates atherosclerotic plaque progression.'},
+    {name:'Atrial Fibrillation',tags:[],targets:['Nav1.5','Kv4.3','CaMKII'],desc:'Aberrant Nav1.5 and Kv4.3 ion channel kinetics with CaMKII-mediated calcium dysregulation sustain re-entrant arrhythmia circuits.'},
+    {name:'Myocardial Infarction',tags:['⚠'],targets:['cTnI','MMP-9','MPO','IL-6'],desc:'Ischemia-reperfusion injury driven by MPO oxidative burst and MMP-9 matrix degradation amplifies cardiomyocyte necrosis.'},
   ]},
 ];
 
