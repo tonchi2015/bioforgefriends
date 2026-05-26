@@ -217,17 +217,23 @@ footer strong{color:#1a5d7d}
     <h1>BioForge &mdash; Drug Candidates</h1>
     <p>Computationally designed molecules &middot; real IC50/Ki binding data &middot; disease-directed</p>
   </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <span class="header-badge">&#128300; BioForge GME v2.0</span>
-    <span class="header-badge">&#9889; ChEMBL 36 validated</span>
-    <span class="header-badge" id="updatedBadge">Updated &mdash;</span>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:280px">
+    <div style="display:flex;gap:8px;justify-content:center">
+      <span class="header-badge">&#128300; BioForge GME v2.0</span>
+      <span class="header-badge">&#9889; ChEMBL 36 validated</span>
+    </div>
+    <span class="header-badge" id="updatedBadge" style="width:100%;text-align:center;background:rgba(255,255,255,0.08)">Updated &mdash;</span>
   </div>
 </header>
 
 <div class="model-card">
   <div class="mc-top">
     <div class="mc-brand">
-      <div class="mc-icon">&#128300;</div>
+      <div class="mc-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </div>
       <div>
         <div class="mc-title">BioForge AI&thinsp;&middot;&thinsp;ML&thinsp;&middot;&thinsp;GME Model</div>
         <div class="mc-subtitle">Generative Molecular Explorer — Proprietary Drug Discovery Engine</div>
