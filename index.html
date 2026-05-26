@@ -378,14 +378,29 @@ body{padding-bottom:70px}
 
 <!-- ── Agents Tab ── -->
 <div id="tabAgents" class="tab-panel">
-  <div class="agents-toolbar">
-    <input id="agentSearch" type="text" placeholder="Search agents or targets..." oninput="filterAgents()">
-    <select id="agentDomain" onchange="filterAgents()">
-      <option value="">All domains</option>
-    </select>
-    <span id="agentCount" style="font-size:0.78rem;color:#7d99ae;font-weight:600;margin-left:auto"></span>
+  <!-- Browse view -->
+  <div id="agentBrowse">
+    <div class="agents-toolbar">
+      <input id="agentSearch" type="text" placeholder="Search agents or targets..." oninput="filterAgents()">
+      <select id="agentDomain" onchange="filterAgents()">
+        <option value="">All domains</option>
+      </select>
+      <span id="agentCount" style="font-size:0.78rem;color:#7d99ae;font-weight:600;margin-left:auto"></span>
+    </div>
+    <div class="agents-wrap" id="agentsWrap"></div>
   </div>
-  <div class="agents-wrap" id="agentsWrap"></div>
+  <!-- Results view -->
+  <div id="agentResults" style="display:none">
+    <div class="agents-toolbar" style="gap:12px">
+      <button onclick="closeAgentResults()" style="display:flex;align-items:center;gap:6px;border:1px solid #d0dce8;border-radius:8px;padding:7px 14px;font-size:0.8rem;font-weight:700;color:#0a2540;background:#fff;cursor:pointer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <span id="agentResultsTitle" style="font-size:0.95rem;font-weight:700;color:#0a2540"></span>
+      <span id="agentResultsCount" style="margin-left:auto;font-size:0.78rem;color:#7d99ae;font-weight:600"></span>
+    </div>
+    <div class="grid" id="agentResultsGrid"></div>
+  </div>
 </div>
 
 <!-- ── About Tab ── -->
@@ -958,6 +973,29 @@ function renderAgents(){
   filterAgents();
 }
 
+function openAgentCandidates(agent, color){
+  const raw=agent.name.toLowerCase().replace(/\(.*?\)/g,'').trim();
+  const keys=[raw, ...raw.split(/[\s\/\-]+/).filter(w=>w.length>3)];
+  const matches=_all.filter(m=>{
+    const d=(m.disease||'').toLowerCase();
+    return keys.some(k=>d.includes(k));
+  });
+  document.getElementById('agentBrowse').style.display='none';
+  document.getElementById('agentResults').style.display='block';
+  document.getElementById('agentResultsTitle').innerHTML=
+    `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:6px;vertical-align:middle"></span>${agent.name}`;
+  document.getElementById('agentResultsCount').textContent=`${matches.length} candidate${matches.length!==1?'s':''}`;
+  const grid=document.getElementById('agentResultsGrid');
+  grid.innerHTML=matches.length
+    ? matches.map(renderCard).join('')
+    : '<div class="empty"><h2>No candidates yet</h2><p style="color:#7d99ae;font-size:0.85rem">The research agent is actively generating candidates for this area. Check back after the next cycle.</p></div>';
+}
+
+function closeAgentResults(){
+  document.getElementById('agentResults').style.display='none';
+  document.getElementById('agentBrowse').style.display='block';
+}
+
 function filterAgents(){
   const q=(document.getElementById('agentSearch').value||'').toLowerCase();
   const dom=document.getElementById('agentDomain').value;
@@ -971,7 +1009,7 @@ function filterAgents(){
     if(!cards.length) return '';
     total+=cards.length;
     const cardsHtml=cards.map(a=>`
-      <div class="agent-card" style="--ac:${d.color}">
+      <div class="agent-card" style="border-color:${hexRgb(d.color,0.3)};cursor:pointer" onclick="openAgentCandidates(${JSON.stringify(a)},${JSON.stringify(d.color)})">
         <div class="agent-name">${a.name}</div>
         <div class="agent-badges">${a.tags.map(t=>{
           if(t==='BBB') return '<span class="abadge abadge-bbb">BBB</span>';
