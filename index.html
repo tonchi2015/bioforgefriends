@@ -942,10 +942,12 @@ function showTab(name){
 
 // ── New tab ──
 function renderNew(){
-  const recent=[..._all].sort((a,b)=>b.id-a.id).slice(0,20);
+  const fresh=_all.filter(m=>m.first_seen===_today);
   const grid=document.getElementById('gridNew');
-  document.getElementById('newCount').textContent=`${recent.length} latest`;
-  grid.innerHTML=recent.map(renderCard).join('');
+  document.getElementById('newCount').textContent=`${fresh.length} added today`;
+  grid.innerHTML=fresh.length
+    ? fresh.map(renderCard).join('')
+    : '<div class="empty"><h2>No new candidates today</h2><p style="color:#7d99ae;font-size:0.85rem">Check back after the next agent cycle.</p></div>';
 }
 
 // ── Domain SVG icons ──
