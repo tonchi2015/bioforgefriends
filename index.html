@@ -614,7 +614,7 @@ const DISEASE_NAMES = {
 function diseaseName(d){ return DISEASE_NAMES[(d||'').toLowerCase()] || d.replace(/\b\w/g,c=>c.toUpperCase()); }
 
 let _all = [], _lastUpdated = '', _lastUpdatedDate = null;
-const _PAGE = 10;
+const _PAGE = 5;
 
 function _relTime(date){
   if(!date) return '—';
