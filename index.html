@@ -78,11 +78,14 @@ header p{font-size:0.85rem;color:#7dc6e8;margin-top:4px}
 .psec-title{font-size:0.67rem;font-weight:800;color:#7d99ae;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .psec-title::after{content:'';flex:1;height:1px;background:#e2eaf0}
 
-/* Score rings */
+/* Score rectangles */
 .rings{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.ring-wrap{text-align:center}
-.ring-label{font-size:0.63rem;color:#7d99ae;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:5px}
-.ring-svg{width:68px;height:68px}
+.ring-wrap{background:#f4f8fc;border-radius:14px;padding:16px 12px;text-align:center;border:1px solid #e2eaf0;position:relative;overflow:hidden}
+.ring-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rc,#1a5d7d)}
+.ring-big{font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:4px}
+.ring-bar-track{height:5px;background:#e2eaf0;border-radius:3px;margin:8px 0 6px}
+.ring-bar-fill{height:100%;border-radius:3px;background:var(--rc,#1a5d7d)}
+.ring-label{font-size:0.6rem;color:#7d99ae;font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
 
 /* Comparison — stacked rows, no horizontal scroll */
 .cmp-row{display:flex;align-items:center;gap:0;border-bottom:1px solid #f0f4f8;padding:10px 0}
@@ -359,17 +362,11 @@ function diseaseTag(d){
 function isPancancer(d){ d=(d||'').toLowerCase(); return d.includes('pancancer')||d.includes('pc ')||d.startsWith('pc')||d.includes('ggta1')||d.includes('histone')||d.includes('pd1'); }
 
 function ring(val, label, color){
-  const r=27, cx=34, cy=34, circ=2*Math.PI*r;
-  const dash=circ*(val||0), gap=circ-dash;
-  return `<div class="ring-wrap">
-    <svg class="ring-svg" viewBox="0 0 68 68">
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e2eaf0" stroke-width="6"/>
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="6"
-        stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-linecap="round"
-        transform="rotate(-90 ${cx} ${cy})"/>
-      <text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central"
-        font-size="12" font-weight="800" fill="${color}">${((val||0)*100).toFixed(0)}</text>
-    </svg>
+  const pct=Math.round((val||0)*100);
+  return `<div class="ring-wrap" style="--rc:${color}">
+    <div class="ring-big" style="color:${color}">${pct}</div>
+    <div style="font-size:0.58rem;color:#aabfce;font-weight:600">/ 100</div>
+    <div class="ring-bar-track"><div class="ring-bar-fill" style="width:${pct}%"></div></div>
     <div class="ring-label">${label}</div>
   </div>`;
 }
