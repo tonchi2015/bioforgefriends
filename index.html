@@ -33,6 +33,26 @@ header p{font-size:0.85rem;color:#7dc6e8;margin-top:4px}
 .toolbar select:focus{border-color:#1a5d7d}
 #countLabel{margin-left:auto;font-size:0.78rem;color:#7d99ae;font-weight:600}
 
+/* ── Model Card ── */
+.model-card{background:#fff;border:1px solid #e2eaf0;border-radius:20px;padding:22px 32px;margin:20px 40px 0;box-shadow:0 2px 12px rgba(26,93,125,0.06)}
+.mc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.mc-brand{display:flex;align-items:center;gap:12px}
+.mc-icon{width:40px;height:40px;background:linear-gradient(135deg,#0a2540,#1a5d7d);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.mc-title{font-size:1.05rem;font-weight:800;color:#0a2540;letter-spacing:-0.3px}
+.mc-subtitle{font-size:0.7rem;color:#7d99ae;font-weight:500;margin-top:1px}
+.mc-badge{display:flex;align-items:center;gap:6px;background:#f0faf4;border:1px solid #bbdfc8;border-radius:30px;padding:5px 14px;font-size:0.72rem;font-weight:700;color:#1a7a3f}
+.mc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid #e8eef5;border-radius:14px;overflow:hidden;margin-bottom:16px}
+.mc-cell{padding:14px 18px;border-right:1px solid #e8eef5}
+.mc-cell:last-child{border-right:none}
+.mc-cell:nth-child(4),.mc-cell:nth-child(5),.mc-cell:nth-child(6){border-top:1px solid #e8eef5}
+.mc-cell-label{font-size:0.6rem;font-weight:800;color:#7d99ae;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:5px}
+.mc-cell-val{font-size:0.88rem;font-weight:700;color:#0a2540}
+.mc-cell-sub{font-size:0.65rem;color:#7d99ae;margin-top:2px}
+.mc-dots{display:flex;gap:8px;flex-wrap:wrap}
+.mc-dot{display:flex;align-items:center;gap:5px;font-size:0.68rem;color:#4b6f86;font-weight:600}
+.mc-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:#22c55e;flex-shrink:0}
+@media(max-width:640px){.model-card{margin:16px;padding:16px}.mc-grid{grid-template-columns:1fr 1fr}.mc-cell:nth-child(3){border-right:none;border-top:1px solid #e8eef5}.mc-cell:nth-child(4){border-top:1px solid #e8eef5}}
+
 /* ── Grid ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;padding:28px 40px;max-width:1400px;margin:0 auto}
 .card{background:#fff;border-radius:16px;border:1px solid #e2eaf0;padding:22px;transition:box-shadow 0.2s,transform 0.2s;position:relative;overflow:hidden;cursor:pointer}
@@ -195,14 +215,66 @@ footer strong{color:#1a5d7d}
 <header>
   <div>
     <h1>BioForge &mdash; Drug Candidates</h1>
-    <p>AI-generated molecules &middot; real binding data &middot; disease-directed</p>
+    <p>Computationally designed molecules &middot; real IC50/Ki binding data &middot; disease-directed</p>
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
-    <span class="header-badge">&#128300; Generative AI</span>
-    <span class="header-badge">&#9889; ChEMBL validated</span>
+    <span class="header-badge">&#128300; BioForge GME v2.0</span>
+    <span class="header-badge">&#9889; ChEMBL 36 validated</span>
     <span class="header-badge" id="updatedBadge">Updated &mdash;</span>
   </div>
 </header>
+
+<div class="model-card">
+  <div class="mc-top">
+    <div class="mc-brand">
+      <div class="mc-icon">&#128300;</div>
+      <div>
+        <div class="mc-title">BioForge AI&thinsp;&middot;&thinsp;ML&thinsp;&middot;&thinsp;GME Model</div>
+        <div class="mc-subtitle">Generative Molecular Explorer — Proprietary Drug Discovery Engine</div>
+      </div>
+    </div>
+    <div class="mc-badge">&#10003;&ensp;Validated &middot; v2.0</div>
+  </div>
+  <div class="mc-grid">
+    <div class="mc-cell">
+      <div class="mc-cell-label">Training Corpus</div>
+      <div class="mc-cell-val">2.85M molecules</div>
+      <div class="mc-cell-sub">ChEMBL 36 · real IC50/Ki</div>
+    </div>
+    <div class="mc-cell">
+      <div class="mc-cell-label">Scoring Engine</div>
+      <div class="mc-cell-val">XGBoost pIC50</div>
+      <div class="mc-cell-sub">5-fold cross-validated</div>
+    </div>
+    <div class="mc-cell">
+      <div class="mc-cell-label">Disease Coverage</div>
+      <div class="mc-cell-val">34 therapeutic areas</div>
+      <div class="mc-cell-sub">50+ cancer subtypes</div>
+    </div>
+    <div class="mc-cell">
+      <div class="mc-cell-label">Generation Method</div>
+      <div class="mc-cell-val">BRICS fragments</div>
+      <div class="mc-cell-sub">Pareto-optimized</div>
+    </div>
+    <div class="mc-cell">
+      <div class="mc-cell-label">Safety Filters</div>
+      <div class="mc-cell-val">hERG · ADME · Tox</div>
+      <div class="mc-cell-sub">Lipinski Rule of 5</div>
+    </div>
+    <div class="mc-cell">
+      <div class="mc-cell-label">Novelty Screen</div>
+      <div class="mc-cell-val">Tanimoto &lt; 0.35</div>
+      <div class="mc-cell-sub">vs entire ChEMBL DB</div>
+    </div>
+  </div>
+  <div class="mc-dots">
+    <span class="mc-dot">Real binding data — no simulations</span>
+    <span class="mc-dot">Autonomous 24/7 research agent</span>
+    <span class="mc-dot">Multi-objective Pareto optimization</span>
+    <span class="mc-dot">Patent-ready novel structures</span>
+    <span class="mc-dot">Disease-directed generation</span>
+  </div>
+</div>
 
 <div class="toolbar">
   <select id="filterDisease" onchange="applyFilters()">
