@@ -78,15 +78,16 @@ header p{font-size:0.85rem;color:#7dc6e8;margin-top:4px}
 .psec-title{font-size:0.67rem;font-weight:800;color:#7d99ae;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .psec-title::after{content:'';flex:1;height:1px;background:#e2eaf0}
 
-/* Score rectangles */
+/* Score boxes */
 .rings{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:640px){.rings{grid-template-columns:repeat(2,1fr)}}
-.ring-wrap{background:#f4f8fc;border-radius:14px;padding:16px 12px;text-align:center;border:1px solid #e2eaf0;position:relative;overflow:hidden}
-.ring-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rc,#1a5d7d)}
-.ring-big{font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:4px}
-.ring-bar-track{height:5px;background:#e2eaf0;border-radius:3px;margin:8px 0 6px}
-.ring-bar-fill{height:100%;border-radius:3px;background:var(--rc,#1a5d7d)}
-.ring-label{font-size:0.6rem;color:#7d99ae;font-weight:700;text-transform:uppercase;letter-spacing:0.4px}
+.ring-wrap{background:#f9fbfd;border-radius:16px;padding:14px 10px;text-align:center;border:1px solid #e6edf4;position:relative;overflow:hidden;transition:box-shadow 0.15s}
+.ring-wrap:hover{box-shadow:0 4px 16px rgba(26,93,125,0.10)}
+.ring-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rc,#1a5d7d);border-radius:0 0 16px 16px}
+.ring-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.6px;font-weight:700;color:#4b6f86;margin-bottom:6px}
+.ring-big{font-size:1.9rem;font-weight:800;color:#1a2c3e;line-height:1}
+.ring-pct{font-size:0.75rem;font-weight:700;color:#7d99ae}
+.ring-note{font-size:0.58rem;color:#aabfce;margin-top:5px;line-height:1.3}
 
 /* Comparison — stacked rows, no horizontal scroll */
 .cmp-row{display:flex;align-items:center;gap:0;border-bottom:1px solid #f0f4f8;padding:10px 0}
@@ -362,13 +363,24 @@ function diseaseTag(d){
 
 function isPancancer(d){ d=(d||'').toLowerCase(); return d.includes('pancancer')||d.includes('pc ')||d.startsWith('pc')||d.includes('ggta1')||d.includes('histone')||d.includes('pd1'); }
 
+const SCORE_NOTES = {
+  'Binding':          'ML pIC50 — ChEMBL',
+  'ADME':             'Lipinski / Veber',
+  'Safety':           'MW · logP · alerts',
+  'Selectivity':      'structural estimate',
+  'Delivery':         'oral / BBB proxy',
+  'Novelty':          'new structure',
+  'Synthesizability': 'complexity score',
+  'Total':            'composite rank',
+};
+
 function ring(val, label, color){
   const pct=Math.round((val||0)*100);
+  const note=SCORE_NOTES[label]||'';
   return `<div class="ring-wrap" style="--rc:${color}">
-    <div class="ring-big" style="color:${color}">${pct}</div>
-    <div style="font-size:0.58rem;color:#aabfce;font-weight:600">/ 100</div>
-    <div class="ring-bar-track"><div class="ring-bar-fill" style="width:${pct}%"></div></div>
     <div class="ring-label">${label}</div>
+    <div class="ring-big" style="color:${color}">${pct}<span class="ring-pct">%</span></div>
+    <div class="ring-note">${note}</div>
   </div>`;
 }
 
@@ -404,11 +416,11 @@ function renderCard(m){
     <div class="card-id">${m.name}</div>
     <div class="card-name">${diseaseName(m.disease||'Unknown')}</div>
     <span class="card-disease">${label}</span>
-    <div class="total-score"><span>Total Score</span><span>${ts.toFixed(3)}</span></div>
+    <div class="total-score"><span>Total Score</span><span>${Math.round(ts*100)}%</span></div>
     <div class="scores">
-      <div class="score-item"><div class="score-label">Binding</div><div class="score-val" style="color:${sc(bs)}">${bs.toFixed(3)}</div>${scoreBar(bs,sc(bs))}</div>
-      <div class="score-item"><div class="score-label">ADME</div><div class="score-val" style="color:${sc(as_)}">${as_.toFixed(3)}</div>${scoreBar(as_,sc(as_))}</div>
-      <div class="score-item"><div class="score-label">Safety</div><div class="score-val" style="color:${sc(ss)}">${ss.toFixed(3)}</div>${scoreBar(ss,sc(ss))}</div>
+      <div class="score-item"><div class="score-label">Binding</div><div class="score-val" style="color:${sc(bs)}">${Math.round(bs*100)}%</div>${scoreBar(bs,sc(bs))}</div>
+      <div class="score-item"><div class="score-label">ADME</div><div class="score-val" style="color:${sc(as_)}">${Math.round(as_*100)}%</div>${scoreBar(as_,sc(as_))}</div>
+      <div class="score-item"><div class="score-label">Safety</div><div class="score-val" style="color:${sc(ss)}">${Math.round(ss*100)}%</div>${scoreBar(ss,sc(ss))}</div>
       <div class="score-item"><div class="score-label">Status</div><div class="score-val" style="font-size:0.68rem;color:#22c55e;margin-top:5px">&#10003; Pre-clinical</div></div>
     </div>
     ${m.scientific_note?`<div class="note">${m.scientific_note}</div>`:''}
@@ -435,7 +447,7 @@ function openPanel(id){
 
   const tags=[
     isPC?'&#127758; Pan-Cancer':isOncology?'&#127988; Oncology':'&#128138; CNS',
-    `&#128200; Score ${ts.toFixed(3)}`,
+    `&#128200; Score ${Math.round(ts*100)}%`,
     '&#9989; Pre-clinical',
     isPC?'&#127758; 53 Cancer Types':'',
   ].filter(Boolean);
