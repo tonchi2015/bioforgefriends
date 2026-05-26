@@ -229,10 +229,26 @@ footer strong{color:#1a5d7d}
 const SUPABASE_URL = 'https://ohywtzhafpoyrtuyaqni.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_sQ5WW8jzLxC9__JvLelDkQ_GFPrO2_C';
 
-// Equity structure
-const PROJECT_VALUATION = 500_000_000; // $500M estimated platform value
-const FOUNDER_SHARE     = 0.03;        // 3% founder stake
-const FRIEND_SHARE      = 0.002;       // 0.2% of founder's share
+const FRIEND_SHARE = 0.002; // 0.2% of founder's 3%
+
+// Annual revenue of comparable drugs (USD)
+const DRUG_REVENUE = {
+  cancer:    { ref:'Pembrolizumab (Keytruda)', revenue: 25_000_000_000 },
+  pancancer: { ref:'Pan-Cancer (projected)',   revenue: 40_000_000_000 },
+  alzheimer: { ref:'Lecanemab (Leqembi)',      revenue:  3_000_000_000 },
+  parkinson: { ref:'Levodopa/Carbidopa',       revenue:    800_000_000 },
+  diabetes:  { ref:'Semaglutide (Ozempic)',    revenue: 13_000_000_000 },
+  default:   { ref:'Comparable drug',          revenue:  5_000_000_000 },
+};
+function getDrugRevenue(d){
+  d=(d||'').toLowerCase();
+  if(d.includes('pancancer')||d.startsWith('pc')) return DRUG_REVENUE.pancancer;
+  if(d.includes('cancer'))    return DRUG_REVENUE.cancer;
+  if(d.includes('alzheimer')) return DRUG_REVENUE.alzheimer;
+  if(d.includes('parkinson')) return DRUG_REVENUE.parkinson;
+  if(d.includes('diabetes'))  return DRUG_REVENUE.diabetes;
+  return DRUG_REVENUE.default;
+}
 
 let _all = [];
 
@@ -342,14 +358,14 @@ function openPanel(id){
   ].filter(Boolean);
   document.getElementById('panelTags').innerHTML=tags.map(t=>`<span class="panel-tag">${t}</span>`).join('');
 
-  // Value
-  const founderVal = PROJECT_VALUATION * FOUNDER_SHARE;
-  const friendVal  = founderVal * FRIEND_SHARE;
+  // Value — based on comparable drug annual revenue
+  const dr = getDrugRevenue(m.disease);
+  const friendAnnual = dr.revenue * 0.03 * FRIEND_SHARE;
   document.getElementById('panelValue').innerHTML=`
-    <div class="value-title">&#128200; Equity Value Estimate</div>
-    <div class="value-row"><span class="value-lbl">Platform valuation (est.)</span><span class="value-num">${fmtMoney(PROJECT_VALUATION)}</span></div>
-    <div class="value-row"><span class="value-lbl">Founder stake (3%)</span><span class="value-num">${fmtMoney(founderVal)}</span></div>
-    <div class="value-row"><span class="value-lbl">Your share (0.2% of founder)</span><span class="value-num big">${fmtMoney(friendVal)}</span></div>`;
+    <div class="value-title">&#128200; Revenue Projection — Based on Comparable Drug</div>
+    <div class="value-row"><span class="value-lbl">Reference: ${dr.ref}</span><span class="value-num">${fmtMoney(dr.revenue)}/yr</span></div>
+    <div class="value-row"><span class="value-lbl">Your annual share (0.2%)</span><span class="value-num big">${fmtMoney(friendAnnual)}/yr</span></div>
+    <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);margin-top:10px">* Projection based on comparable approved drug revenue. Subject to clinical development and market conditions.</div>`;
 
   // Rings
   document.getElementById('panelRings').innerHTML=ring(bs,'Binding',sc(bs))+ring(as_,'ADME',sc(as_))+ring(ss,'Safety',sc(ss))+ring(ts,'Total',sc(ts));
