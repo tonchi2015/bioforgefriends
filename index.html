@@ -669,13 +669,10 @@ async function startPolling(){
   },5*60*1000);
 }
 
-const USERS = {
-  'nova':  'Rx#4827Kp',
-  'atlas': 'Mg#7391Qw',
-  'helix': 'Tz#5562Lm',
-  'prism': 'Jx#8104Vn',
-  'orbit': 'Wy#3648Db',
-};
+async function _sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
 // ── Helpers ───────────────────────────────────────────────────────
 function sc(v){ return v>=0.75?'#22c55e':v>=0.60?'#f59e0b':'#ef4444'; }
@@ -957,15 +954,30 @@ async function load(){
 }
 
 // ── Login ─────────────────────────────────────────────────────────
-function doLogin(){
+async function doLogin(){
   const u=document.getElementById('loginUser').value.trim().toLowerCase();
   const p=document.getElementById('loginPass').value;
-  if(USERS[u]&&USERS[u]===p){
-    sessionStorage.setItem('bf_auth',u);
-    document.getElementById('loginOverlay').style.display='none';
-    load();
-  } else {
-    document.getElementById('loginErr').textContent='Invalid username or password.';
+  if(!u||!p){ document.getElementById('loginErr').textContent='Enter username and password.'; return; }
+  const btn=document.getElementById('loginBtn');
+  btn.textContent='Checking…'; btn.disabled=true;
+  try{
+    const hash=await _sha256(p);
+    const r=await fetch(
+      `${SUPABASE_URL}/rest/v1/app_users?select=username&username=eq.${encodeURIComponent(u)}&password_hash=eq.${encodeURIComponent(hash)}&limit=1`,
+      {headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}}
+    );
+    const d=await r.json();
+    if(d.length){
+      sessionStorage.setItem('bf_auth',u);
+      document.getElementById('loginOverlay').style.display='none';
+      load();
+    } else {
+      document.getElementById('loginErr').textContent='Invalid username or password.';
+    }
+  }catch(e){
+    document.getElementById('loginErr').textContent='Connection error — try again.';
+  }finally{
+    btn.textContent='Enter'; btn.disabled=false;
   }
 }
 if(sessionStorage.getItem('bf_auth')){
