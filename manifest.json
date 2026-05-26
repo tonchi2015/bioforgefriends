@@ -1,6 +1,6 @@
 {
-  "name": "BioForge Drug Candidates",
-  "short_name": "BioForge",
+  "name": "BioForgeLab",
+  "short_name": "BioForgeLab",
   "description": "AI-generated therapeutic molecule candidates across 34 disease areas",
   "start_url": "/",
   "display": "standalone",
