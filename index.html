@@ -110,15 +110,15 @@ header p{font-size:0.85rem;color:#7dc6e8;margin-top:4px}
 .ring-note{font-size:0.58rem;color:#aabfce;margin-top:5px;line-height:1.3}
 
 /* Comparison — stacked rows, no horizontal scroll */
-.cmp-row{display:flex;align-items:center;gap:0;border-bottom:1px solid #f0f4f8;padding:10px 0}
+.cmp-row{display:flex;flex-direction:column;gap:6px;border-bottom:1px solid #f0f4f8;padding:10px 0}
 .cmp-row:last-child{border:none}
-.cmp-metric{font-size:0.78rem;color:#5a7a90;font-weight:600;width:120px;flex-shrink:0}
+.cmp-metric{font-size:0.78rem;color:#5a7a90;font-weight:600}
 .cmp-bars{flex:1;display:flex;flex-direction:column;gap:4px}
 .cmp-bar-row{display:flex;align-items:center;gap:6px;font-size:0.72rem}
 .cmp-bar-label{width:60px;font-weight:600;color:#7d99ae;flex-shrink:0;font-size:0.65rem}
 .cmp-bar-track{flex:1;height:7px;background:#e2eaf0;border-radius:4px;overflow:hidden}
 .cmp-bar-fill{height:100%;border-radius:4px}
-.cmp-val{width:36px;font-weight:700;font-size:0.72rem;text-align:right}
+.cmp-val{min-width:42px;font-weight:700;font-size:0.72rem;text-align:right;padding-left:8px}
 .cmp-delta{font-size:0.7rem;font-weight:700;margin-left:4px}
 .cmp-better{color:#22c55e}
 .cmp-behind{color:#f59e0b}
