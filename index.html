@@ -226,7 +226,7 @@ footer strong{color:#1a5d7d}
       <p style="margin:0;margin-top:2px">Computationally designed molecules &middot; real IC50/Ki binding data &middot; disease-directed</p>
     </div>
   </div>
-  <div style="display:flex;flex-direction:column;gap:10px;flex:1;min-width:240px">
+  <div style="display:flex;flex-direction:column;gap:10px;min-width:280px">
     <div style="display:flex;gap:6px">
       <span class="header-badge" style="flex:1;text-align:center;white-space:nowrap">BioForge GME v2.0</span>
       <span class="header-badge" style="flex:1;text-align:center;white-space:nowrap">ChEMBL 36 validated</span>
@@ -287,7 +287,7 @@ footer strong{color:#1a5d7d}
     <span class="mc-dot">Autonomous 24/7 research agent</span>
     <span class="mc-dot">Multi-objective Pareto optimization</span>
     <span class="mc-dot">Patent-ready novel structures</span>
-    <span class="mc-dot">Disease-directed generation</span>
+    <span class="mc-dot" style="flex-basis:100%">Disease-directed generation</span>
   </div>
 </div>
 
@@ -491,13 +491,17 @@ function fmtMoney(n){
   return '$'+n.toFixed(0);
 }
 
+const iLeaf='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>';
+const iTarget='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>';
+const iWave='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:3px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
+
 // ── Cards ─────────────────────────────────────────────────────────
 function renderCard(m){
   const bs=m.binding_score||0, as_=m.adme_score||0, ss=m.safety_score||0, ts=m.total_score||0;
   const tag=diseaseTag(m.disease);
   const isOncology=!!m.cancer_type;
   const isPC=isPancancer(m.disease);
-  const label=isPC?'&#127758; Pan-Cancer':isOncology?'&#127988; Oncology':'&#128138; CNS / Metabolic';
+  const label=isPC?iLeaf+'Pan-Cancer':isOncology?iTarget+'Oncology':iWave+'CNS / Metabolic';
   return `
   <div class="card ${tag}" onclick="openPanel(${m.id})">
     <div class="card-id">${m.name}</div>
