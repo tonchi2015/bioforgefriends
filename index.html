@@ -631,9 +631,14 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closePanel(); });
 // ── Filters ───────────────────────────────────────────────────────
 function populateDiseaseFilter(data){
   const sel=document.getElementById('filterDisease');
+  const seen=new Map();
   [...new Set(data.map(m=>m.disease).filter(Boolean))].sort().forEach(d=>{
+    const name=diseaseName(d);
+    if(!seen.has(name)) seen.set(name,name);
+  });
+  [...seen.keys()].sort().forEach(name=>{
     const o=document.createElement('option');
-    o.value=d; o.textContent=diseaseName(d);
+    o.value=name; o.textContent=name;
     sel.appendChild(o);
   });
 }
@@ -643,7 +648,7 @@ function applyFilters(){
   const sortBy=document.getElementById('sortBy').value;
   const minScore=parseFloat(document.getElementById('minScore').value);
   let data=_all.filter(m=>{
-    if(disease&&m.disease!==disease) return false;
+    if(disease&&diseaseName(m.disease)!==disease) return false;
     if((m.total_score||0)<minScore) return false;
     return true;
   });
