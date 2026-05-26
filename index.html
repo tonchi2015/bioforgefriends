@@ -80,6 +80,7 @@ header p{font-size:0.85rem;color:#7dc6e8;margin-top:4px}
 
 /* Score rectangles */
 .rings{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.rings{grid-template-columns:repeat(2,1fr)}}
 .ring-wrap{background:#f4f8fc;border-radius:14px;padding:16px 12px;text-align:center;border:1px solid #e2eaf0;position:relative;overflow:hidden}
 .ring-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rc,#1a5d7d)}
 .ring-big{font-size:1.7rem;font-weight:800;line-height:1;margin-bottom:4px}
@@ -425,6 +426,7 @@ const PC_TARGETS = [
 function openPanel(id){
   const m=_all.find(x=>x.id===id); if(!m) return;
   const bs=m.binding_score||0, as_=m.adme_score||0, ss=m.safety_score||0, ts=m.total_score||0;
+  const sel=m.selectivity_score||0, del=m.delivery_score||0, nov=m.novelty_score||0, syn=m.synthesizability_score||0;
   const isOncology=!!m.cancer_type, isPC=isPancancer(m.disease);
   const cmp=getCmp(m.disease);
 
@@ -449,7 +451,15 @@ function openPanel(id){
     <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);margin-top:10px">* Projection based on comparable approved drug revenue. Subject to clinical development and market conditions.</div>`;
 
   // Rings
-  document.getElementById('panelRings').innerHTML=ring(bs,'Binding',sc(bs))+ring(as_,'ADME',sc(as_))+ring(ss,'Safety',sc(ss))+ring(ts,'Total',sc(ts));
+  document.getElementById('panelRings').innerHTML=
+    ring(bs,'Binding',sc(bs))+
+    ring(as_,'ADME',sc(as_))+
+    ring(ss,'Safety',sc(ss))+
+    ring(sel,'Selectivity',sc(sel))+
+    ring(del,'Delivery',sc(del))+
+    ring(nov,'Novelty',sc(nov))+
+    ring(syn,'Synthesizability',sc(syn))+
+    ring(ts,'Total',sc(ts));
 
   // Pancancer targets
   const pcWrap=document.getElementById('panelPcWrap');
