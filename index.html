@@ -101,11 +101,11 @@ header p{font-size:0.85rem;color:#7dc6e8;margin-top:4px}
 /* Score boxes */
 .rings{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media(max-width:640px){.rings{grid-template-columns:repeat(2,1fr)}}
-.ring-wrap{background:#f9fbfd;border-radius:16px;padding:14px 10px;text-align:center;border:1px solid #e6edf4;position:relative;overflow:hidden;transition:box-shadow 0.15s}
+.ring-wrap{background:#f9fbfd;border-radius:16px;padding:10px 7px;text-align:center;border:1px solid #e6edf4;position:relative;overflow:hidden;transition:box-shadow 0.15s}
 .ring-wrap:hover{box-shadow:0 4px 16px rgba(26,93,125,0.10)}
 .ring-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--rc,#1a5d7d);border-radius:0 0 16px 16px}
 .ring-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.6px;font-weight:700;color:#4b6f86;margin-bottom:6px}
-.ring-big{font-size:1.9rem;font-weight:800;color:#1a2c3e;line-height:1}
+.ring-big{font-size:1.5rem;font-weight:800;color:#1a2c3e;line-height:1}
 .ring-pct{font-size:0.75rem;font-weight:700;color:#7d99ae}
 .ring-note{font-size:0.58rem;color:#aabfce;margin-top:5px;line-height:1.3}
 
@@ -228,8 +228,8 @@ footer strong{color:#1a5d7d}
   </div>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;min-width:280px">
     <div style="display:flex;gap:8px;justify-content:center">
-      <span class="header-badge">&#128300; BioForge GME v2.0</span>
-      <span class="header-badge">&#9889; ChEMBL 36 validated</span>
+      <span class="header-badge">BioForge GME v2.0</span>
+      <span class="header-badge">ChEMBL 36 validated</span>
     </div>
     <span class="header-badge" id="updatedBadge" style="width:100%;text-align:center;background:rgba(255,255,255,0.08)">Updated &mdash;</span>
   </div>
@@ -539,7 +539,7 @@ function openPanel(id){
   const dr = getDrugRevenue(m.disease);
   const friendAnnual = dr.revenue * 0.03 * FRIEND_SHARE;
   document.getElementById('panelValue').innerHTML=`
-    <div class="value-title">&#128200; Revenue Projection — Based on Comparable Drug</div>
+    <div class="value-title">Revenue Projection — Based on Comparable Drug</div>
     <div class="value-row"><span class="value-lbl">Reference: ${dr.ref}</span><span class="value-num">${fmtMoney(dr.revenue)}/yr</span></div>
     <div class="value-row"><span class="value-lbl">Your annual share (0.2%)</span><span class="value-num big">${fmtMoney(friendAnnual)}/yr</span></div>
     <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);margin-top:10px">* Projection based on comparable approved drug revenue. Subject to clinical development and market conditions.</div>`;
@@ -560,10 +560,10 @@ function openPanel(id){
   if(isPC){
     pcWrap.style.display='';
     document.getElementById('panelPcTargets').innerHTML=`
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div class="safety-grid">
         <div class="safety-pill"><div class="safety-icon">&#127758;</div><div class="safety-text">50+ Cancer Types<small>Broad-spectrum coverage</small></div></div>
         <div class="safety-pill"><div class="safety-icon">&#128300;</div><div class="safety-text">Multi-Target Strategy<small>Proprietary target selection</small></div></div>
-        <div class="safety-pill"><div class="safety-icon">&#128274;</div><div class="safety-text">Confidential Targets<small>IP-protected research</small></div></div>
+        <div class="safety-pill" style="grid-column:1/-1"><div class="safety-icon">&#128274;</div><div class="safety-text">Confidential Targets<small>IP-protected research</small></div></div>
       </div>`;
   } else { pcWrap.style.display='none'; }
 
@@ -579,18 +579,20 @@ function openPanel(id){
       const d=((x.our-x.ref)*100).toFixed(0);
       const cls=d>=0?'cmp-better':'cmp-behind';
       return `<div class="cmp-row">
-        <div class="cmp-metric">${x.lbl}</div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+          <div class="cmp-metric">${x.lbl}</div>
+          <span class="cmp-delta ${cls}">${d>=0?'+':''}${d}%</span>
+        </div>
         <div class="cmp-bars">
           <div class="cmp-bar-row">
             <span class="cmp-bar-label">BioForge</span>
             <div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${(x.our*100).toFixed(0)}%;background:${sc(x.our)}"></div></div>
-            <span class="cmp-val" style="color:${sc(x.our)}">${x.our.toFixed(2)}</span>
-            <span class="cmp-delta ${cls}">${d>=0?'+':''}${d}%</span>
+            <span class="cmp-val" style="color:${sc(x.our)}">${Math.round(x.our*100)}%</span>
           </div>
           <div class="cmp-bar-row">
             <span class="cmp-bar-label" style="color:#aabfce">Standard</span>
             <div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:${(x.ref*100).toFixed(0)}%;background:#aabfce"></div></div>
-            <span class="cmp-val" style="color:#aabfce">${x.ref.toFixed(2)}</span>
+            <span class="cmp-val" style="color:#aabfce">${Math.round(x.ref*100)}%</span>
           </div>
         </div>
       </div>`;
