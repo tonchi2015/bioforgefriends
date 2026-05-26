@@ -9,6 +9,18 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f4f8;color:#1a2c3e;min-height:100vh}
 
+/* ── Login overlay ── */
+#loginOverlay{position:fixed;inset:0;background:linear-gradient(135deg,#0a2540,#1a5d7d);display:flex;align-items:center;justify-content:center;z-index:9999}
+#loginBox{background:#fff;border-radius:20px;padding:40px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+#loginBox h2{font-size:1.3rem;font-weight:700;color:#0a2540;margin-bottom:4px}
+#loginBox p{font-size:0.75rem;color:#7d99ae;margin-bottom:28px}
+#loginBox label{font-size:0.72rem;font-weight:700;color:#3a5a72;text-transform:uppercase;letter-spacing:0.4px;display:block;margin-bottom:6px}
+#loginBox input{width:100%;border:1px solid #d0dce8;border-radius:10px;padding:10px 14px;font-size:0.9rem;color:#0a2540;outline:none;margin-bottom:16px}
+#loginBox input:focus{border-color:#1a5d7d}
+#loginBtn{width:100%;background:linear-gradient(135deg,#0a2540,#1a5d7d);color:#fff;border:none;border-radius:10px;padding:12px;font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:4px}
+#loginBtn:hover{opacity:0.9}
+#loginErr{font-size:0.75rem;color:#ef4444;margin-top:10px;text-align:center;min-height:18px}
+
 header{background:linear-gradient(135deg,#0a2540,#1a5d7d);padding:32px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
 header h1{font-size:1.6rem;font-weight:700;color:#fff;letter-spacing:-0.5px}
 header p{font-size:0.8rem;color:#7dc6e8;margin-top:4px}
@@ -66,6 +78,19 @@ footer strong{color:#1a5d7d}
 </style>
 </head>
 <body>
+
+<div id="loginOverlay">
+  <div id="loginBox">
+    <h2>BioForge</h2>
+    <p>Private access — enter your credentials</p>
+    <label>Username</label>
+    <input type="text" id="loginUser" placeholder="username" autocomplete="username">
+    <label>Password</label>
+    <input type="password" id="loginPass" placeholder="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button id="loginBtn" onclick="doLogin()">Enter</button>
+    <div id="loginErr"></div>
+  </div>
+</div>
 
 <header>
   <div>
@@ -239,7 +264,32 @@ async function load() {
   }
 }
 
-load();
+// ── Login ─────────────────────────────────────────────────────────
+const USERS = {
+  'nova':   'Rx#4827Kp',
+  'atlas':  'Mg#7391Qw',
+  'helix':  'Tz#5562Lm',
+  'prism':  'Jx#8104Vn',
+  'orbit':  'Wy#3648Db',
+};
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim().toLowerCase();
+  const p = document.getElementById('loginPass').value;
+  if (USERS[u] && USERS[u] === p) {
+    sessionStorage.setItem('bf_auth', u);
+    document.getElementById('loginOverlay').style.display = 'none';
+    load();
+  } else {
+    document.getElementById('loginErr').textContent = 'Invalid username or password.';
+  }
+}
+
+// Auto-login if session exists
+if (sessionStorage.getItem('bf_auth')) {
+  document.getElementById('loginOverlay').style.display = 'none';
+  load();
+}
 </script>
 </body>
 </html>
