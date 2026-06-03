@@ -1672,37 +1672,37 @@ function filterAgents(){
 // ══════════════════════════════════════════════════════════════
 let _pcInited=false;
 
-const PC_COVERAGE_GROUPS=[
-  {title:'Blood — Leukemia',items:[['Acute myeloid leukemia (AML)',0],['Acute T-cell lymphoblastic leukemia (T-ALL)',0],['Acute B-cell lymphoblastic leukemia (B-ALL)',0],['Acute monocytic leukemia',0],['Acute megakaryoblastic leukemia',1],['Erythroleukemia',0],['Promyelocytic leukemia (APL)',0],['Chronic myeloid leukemia (CML)',0],['Chronic lymphocytic leukemia (CLL)',0],['Hairy cell leukemia',0],['Juvenile myelomonocytic leukemia (JMML)',1],['Adult T-cell leukemia/lymphoma (ATLL)',0],['Myelodysplastic syndrome (MDS)',0],['Chronic myelomonocytic leukemia (CMML)',0]]},
-  {title:'Blood — Lymphoma',items:[['Diffuse large B-cell lymphoma (DLBCL)',0],['Follicular / B-cell lymphoma',0],['Mantle cell lymphoma',0],['Anaplastic large cell lymphoma (ALCL)',0],['Cutaneous T-cell lymphoma (CTCL)',0],['Histiocytic lymphoma',0],['AIDS-related lymphoma',0],['BPDCN',0]]},
-  {title:'Blood — Myeloma',items:[['Multiple myeloma',0]]},
-  {title:'Brain & CNS',items:[['Glioblastoma (GBM)',0],['Brain lower grade glioma',0],['Gliosarcoma',0],['Astrocytoma',0],['Anaplastic oligodendroglioma',0],['DIPG / Diffuse midline glioma H3K27',1],['Medulloblastoma',1],['Ependymoma',1],['Choroid plexus tumor',1],['ATRT',1],['Optic nerve glioma',1],['Brain stem neoplasms',0],['Pituitary tumor',0],['Hemangioblastoma',0]]},
-  {title:'Peripheral Nervous System',items:[['Neuroblastoma',1],['Ganglioneuroblastoma',1],['Neuroepithelioma',0],['Malignant peripheral nerve sheath tumor (MPNST)',0]]},
-  {title:'Breast',items:[['Breast cancer',0],['Triple negative breast cancer (TNBC)',0],['Male breast cancer',0]]},
-  {title:'Lung',items:[['Lung adenocarcinoma',0],['Lung squamous cell carcinoma',0],['Small cell lung carcinoma',0],['Pulmonary neuroendocrine / Carcinoid',0]]},
-  {title:'Gastrointestinal',items:[['Colorectal / Colon adenocarcinoma',0],['Rectum adenocarcinoma',0],['Gastric / Stomach adenocarcinoma',0],['Esophageal cancer',0],['Pancreatic adenocarcinoma',0],['Pancreatic neuroendocrine tumor (PNET)',0],['Hepatocellular carcinoma',0],['Hepatoblastoma',1],['Cholangiocarcinoma / Bile duct cancer',0],['Gallbladder carcinoma',0],['Appendiceal cancer',0],['GIST',0],['Klatskin tumor',0],['Islet cell carcinoma',0],['Anal canal carcinoma',0],['Duodenal adenocarcinoma',0]]},
-  {title:'Gynecological',items:[['Ovarian carcinoma',0],['Cervical cancer',0],['Endometrial cancer',0],['Uterine carcinosarcoma',0],['Gestational trophoblastic tumor',0],['Vaginal cancer',0],['Vulvar cancer',0],['Fallopian tube carcinoma',0],['Granulosa cell tumor',0],['Choriocarcinoma',0]]},
-  {title:'Skin & Melanoma',items:[['Melanoma (cutaneous)',0],['Uveal melanoma',0],['Acral lentiginous melanoma',0],['Merkel cell carcinoma',0],['Kaposi sarcoma',0],['Basal cell carcinoma',0]]},
-  {title:'Urological',items:[['Prostate adenocarcinoma',0],['Kidney clear cell / chromophobe / papillary',0],['Bladder / Urothelial cancer',0],['Testicular germ cell tumor',0],['Penile carcinoma',0],['Ureteral carcinoma',0],['Urethral carcinoma',0],['Embryonal carcinoma',0]]},
-  {title:'Head & Neck',items:[['Head and neck squamous cell carcinoma',0],['Nasopharyngeal carcinoma',0],['Oral squamous cell carcinoma',0],['Salivary gland carcinoma',0],['Laryngeal carcinoma',0],['Hypopharyngeal carcinoma',0],['Paranasal sinus carcinoma',0],['Ameloblastoma',0]]},
-  {title:'Thyroid & Endocrine',items:[['Thyroid carcinoma',0],['Adrenocortical cancer',0],['Pheochromocytoma / Paraganglioma',0],['Thymoma',0],['Carcinoid / Neuroendocrine tumor',0]]},
-  {title:'Sarcomas',items:[['Osteosarcoma',1],['Ewing sarcoma',1],['Rhabdomyosarcoma',1],['Fibrosarcoma',0],['Leiomyosarcoma',0],['Liposarcoma',0],['Chondrosarcoma',0],['Synovial sarcoma',0],['DSRCT',1],['Rhabdoid Tumor',1],['Undifferentiated pleomorphic sarcoma',0],['Alveolar soft part sarcoma',0],['Giant cell tumor of bone',0],['Desmoid tumor',0]]},
-  {title:'Other / Rare',items:[['Mesothelioma',0],['Spinal cord neoplasms',0],['Meningeal neoplasms',0],['Peritoneal neoplasms',0],['Retinoblastoma',1],['Wilms tumor / Nephroblastoma',1],['Yolk sac tumor',1],['PEComa',0],['Solitary fibrous tumor',0],['Conjunctival neoplasm',0],['Hereditary breast-ovarian (BRCA)',0]]},
-];
-
 function renderPcCoverage(){
   const el=document.getElementById('pcCoverageGroups');
   if(!el) return;
-  el.innerHTML=PC_COVERAGE_GROUPS.map(g=>`
-    <div class="pc-group">
-      <div class="pc-group-hdr">
-        <span class="pc-group-name">${g.title}</span>
-        <span class="pc-group-cnt">${g.items.length}</span>
-      </div>
-      <div class="pc-chips">
-        ${g.items.map(([name,ped])=>`<span class="pc-chip${ped?' ped':''}">${name}${ped?' ★':''}</span>`).join('')}
-      </div>
-    </div>`).join('');
+  const cats=[
+    {icon:'🩸',label:'Leukemia & Lymphoma',count:23},
+    {icon:'🧠',label:'Brain & CNS',count:18},
+    {icon:'🫁',label:'Lung & Thoracic',count:6},
+    {icon:'🍽️',label:'Gastrointestinal',count:16},
+    {icon:'♀',label:'Gynecological',count:10},
+    {icon:'🦴',label:'Sarcomas',count:14},
+    {icon:'🎗️',label:'Breast',count:3},
+    {icon:'🔬',label:'Urological',count:8},
+    {icon:'🦷',label:'Head & Neck',count:8},
+    {icon:'⚗️',label:'Thyroid & Endocrine',count:5},
+    {icon:'🌑',label:'Skin & Melanoma',count:6},
+    {icon:'🔭',label:'Rare & Other',count:11},
+  ];
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      ${cats.map(c=>`
+        <div style="background:#f4f8fc;border:1px solid #e2eaf0;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.1rem">${c.icon}</span>
+          <div>
+            <div style="font-size:0.65rem;font-weight:700;color:#0a2540">${c.label}</div>
+            <div style="font-size:0.6rem;color:#7d99ae">${c.count} cancer types</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="background:#eef5ff;border-left:3px solid #1a5d7d;border-radius:0 8px 8px 0;padding:10px 13px;font-size:0.68rem;color:#1a5d7d;font-weight:600">
+      Full coverage map and target-cancer mappings available under NDA to qualified research partners.
+    </div>`;
 }
 
 function renderPcMols(){
