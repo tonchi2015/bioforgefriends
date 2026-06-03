@@ -456,7 +456,7 @@ body{padding-bottom:70px}
 <div id="tabTrag" class="tab-panel">
   <div class="toolbar" style="border-bottom:1px solid #e2eaf0;gap:8px">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#1a5d7d" stroke-width="1.8" stroke-linecap="round"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="3" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="13" r="1.8"/><line x1="4.8" y1="7.2" x2="6.2" y2="4.8"/><line x1="9.8" y1="4.8" x2="11.2" y2="7.2"/><line x1="11.2" y1="8.8" x2="9.8" y2="11.2"/><line x1="6.2" y1="11.2" x2="4.8" y2="8.8"/></svg>
-    <span style="font-size:0.82rem;font-weight:700;color:#0a2540">Evolution Trail</span>
+    <span style="font-size:0.82rem;font-weight:700;color:#0a2540">Evolution Lineage</span>
     <span id="tragCount" style="margin-left:auto;font-size:0.78rem;color:#7d99ae;font-weight:600"></span>
   </div>
   <div style="padding:16px 16px 100px">
@@ -677,7 +677,7 @@ body{padding-bottom:70px}
   </button>
   <button class="nav-btn" id="btn-trag" onclick="showTab('trag')">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="3" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="13" r="1.8"/><line x1="4.8" y1="7.2" x2="6.2" y2="4.8"/><line x1="9.8" y1="4.8" x2="11.2" y2="7.2"/><line x1="11.2" y1="8.8" x2="9.8" y2="11.2"/><line x1="6.2" y1="11.2" x2="4.8" y2="8.8"/></svg>
-    Trail
+    Lineage
   </button>
   <button class="nav-btn" id="btn-agents" onclick="showTab('agents')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -948,25 +948,36 @@ function openLinSheet(id){
   overlay.style.display='block';
   sheet.classList.add('open');
   document.body.style.overflow='hidden';
-  const {chain,children}=buildLinChain(id);
-  el.innerHTML=renderLinSheet(chain,children,id);
+  buildLinChain(id).then(({chain,children})=>{ el.innerHTML=renderLinSheet(chain,children,id); });
 }
 function closeLinSheet(){
   document.getElementById('linSheetOverlay').style.display='none';
   document.getElementById('linSheet').classList.remove('open');
   document.body.style.overflow='';
 }
-function buildLinChain(id){
+async function buildLinChain(id){
   const chain=[];
   const visited=new Set();
   const nid=Number(id);
-  let node=_all.find(m=>Number(m.id)===nid);
+  const sbHeaders={apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`};
+
+  async function fetchById(mid){
+    let node=_all.find(m=>Number(m.id)===mid);
+    if(node) return node;
+    try{
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/public_candidates?id=eq.${mid}&select=*`,{headers:sbHeaders});
+      const d=await r.json();
+      if(d&&d[0]){ _all.push(d[0]); return d[0]; }
+    }catch(e){}
+    return null;
+  }
+
+  let node=await fetchById(nid);
   while(node&&!visited.has(node.id)){
     visited.add(node.id);
     chain.unshift(node);
     if(!node.parent_id) break;
-    const pid=Number(node.parent_id);
-    node=_all.find(m=>Number(m.id)===pid);
+    node=await fetchById(Number(node.parent_id));
   }
   const children=_all.filter(m=>Number(m.parent_id)===nid&&Number(m.id)!==nid);
   return{chain,children};
@@ -1381,8 +1392,7 @@ function showTragDetail(id){
   document.getElementById('tragDetail').style.display='block';
   const el=document.getElementById('tragContent');
   el.innerHTML='<div style="text-align:center;padding:30px;color:#7d99ae">Loading...</div>';
-  const {chain,children}=buildLinChain(id);
-  el.innerHTML=renderLineageMobile(chain,children,id);
+  buildLinChain(id).then(({chain,children})=>{ el.innerHTML=renderLineageMobile(chain,children,id); });
 }
 
 function tragBack(){
@@ -1722,7 +1732,7 @@ function initPanCancer(){
   <div class="panel-handle"></div>
   <div class="panel-hero">
     <button class="panel-close" onclick="closeLinSheet()">&#10005;</button>
-    <div class="panel-id" style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#7dc6e8" stroke-width="1.8" stroke-linecap="round"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="3" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="13" r="1.8"/><line x1="4.8" y1="7.2" x2="6.2" y2="4.8"/><line x1="9.8" y1="4.8" x2="11.2" y2="7.2"/><line x1="11.2" y1="8.8" x2="9.8" y2="11.2"/><line x1="6.2" y1="11.2" x2="4.8" y2="8.8"/></svg> EVOLUTION TRAIL</div>
+    <div class="panel-id" style="display:flex;align-items:center;gap:6px"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="#7dc6e8" stroke-width="1.8" stroke-linecap="round"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="3" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="13" r="1.8"/><line x1="4.8" y1="7.2" x2="6.2" y2="4.8"/><line x1="9.8" y1="4.8" x2="11.2" y2="7.2"/><line x1="11.2" y1="8.8" x2="9.8" y2="11.2"/><line x1="6.2" y1="11.2" x2="4.8" y2="8.8"/></svg> EVOLUTION LINEAGE</div>
     <div id="linSheetTitle" class="panel-name" style="font-size:1.1rem"></div>
   </div>
   <div class="panel-body">
