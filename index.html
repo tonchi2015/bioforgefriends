@@ -1444,8 +1444,8 @@ function renderLineageMobile(chain,children,currentId){
   }
 
   if(children.length){
-    html+=`<div style="font-size:0.62rem;font-weight:800;color:#c07000;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px">&#8594; Direct Improvements (${children.length})</div>`;
-    children.forEach(c=>{ html+=nodeHtml(c,false,false,true); });
+    html+=`<div style="font-size:0.62rem;font-weight:800;color:#c07000;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 10px">&#8594; Direct Improvements (${children.length})</div>`;
+    children.forEach(c=>{ html+=`<div style="margin-bottom:12px">${nodeHtml(c,false,false,true)}</div>`; });
   }
   return html;
 }
