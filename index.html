@@ -946,28 +946,32 @@ function buildLinChain(id){
   return{chain,children};
 }
 function renderLinSheet(chain,children,currentId){
-  if(!chain.length) return '<div style="color:#7d99ae;padding:20px;text-align:center">Нема податоци за овој кандидат.</div>';
+  if(!chain.length) return '<div style="color:#7d99ae;padding:20px;text-align:center">No data for this candidate.</div>';
   const pct=v=>((v||0)*100).toFixed(2);
   const dimLabel=d=>d?(d.replace('_score','').replace('_',' ')):'';
   const dimColors={binding:'#1a5d7d',adme:'#6d28d9',safety:'#42b05a',selectivity:'#c07000',delivery:'#0891b2',novelty:'#e67e22',synthesizability:'#6b7280'};
 
   const nodeHtml=(c,isRoot,isCurr,isChild)=>{
-    const cls=isCurr?'current':isRoot?'root':'';
     const improved=c.improved_dim?dimLabel(c.improved_dim):null;
     const col=dimColors[c.improved_dim]||'#4b6f86';
-    return `<div class="lin-node ${cls}">
-      <div style="font-size:0.58rem;color:#7d99ae;margin-bottom:3px">ID ${c.id} · ${(c.method||'').replace('_',' ')||'—'}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:1.35rem;font-weight:900;color:${isCurr?'#1a5d7d':isRoot?'#2b7e3a':'#4b6f86'}">${pct(c.total_score)}<span style="font-size:0.6rem;color:#7d99ae">%</span></div>
-        ${improved?`<span style="font-size:0.6rem;font-weight:700;background:${col}22;color:${col};border-radius:6px;padding:2px 8px">↑ ${improved}</span>`:''}
-        ${isCurr?'<span style="font-size:0.6rem;color:#1a5d7d;font-weight:800">● ТЕКОВЕН</span>':''}
-        ${isRoot&&!isCurr?'<span style="font-size:0.6rem;color:#2b7e3a;font-weight:800">● ОРИГИНАЛ</span>':''}
+    const border=isCurr?'2.5px solid #1a5d7d':isRoot?'2px solid #2b7e3a':isChild?'2px dashed #c07000':'1.5px solid #c8d9e6';
+    const bg=isCurr?'#eef5ff':isRoot?'#f0fdf4':isChild?'#fffbeb':'#f8fafc';
+    const scoreColor=isCurr?'#1a5d7d':isRoot?'#2b7e3a':'#4b6f86';
+    const bars=[['Bind',c.binding_score,'#1a5d7d'],['ADME',c.adme_score,'#6d28d9'],['Safe',c.safety_score,'#42b05a']];
+    return `<div style="border:${border};border-radius:12px;padding:12px 14px;background:${bg};margin-bottom:4px">
+      <div style="font-size:0.58rem;color:#7d99ae;margin-bottom:4px">ID ${c.id} · ${(c.method||'').replace('_',' ')||'—'} · ${c.created_at?c.created_at.slice(0,10):'—'}</div>
+      <div style="font-size:1.5rem;font-weight:800;color:${scoreColor};line-height:1.1;margin-bottom:6px">${pct(c.total_score)}<span style="font-size:0.62rem;color:#7d99ae">/100</span></div>
+      ${improved?`<div style="font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:6px;background:${col}22;color:${col};display:inline-block;margin-bottom:6px">&#8679; ${improved}</div>`:''}
+      <div style="display:flex;flex-direction:column;gap:3px">
+        ${bars.map(([n,v,c2])=>`<div style="display:flex;align-items:center;gap:5px;font-size:0.58rem;color:#4b6f86">
+          <span style="width:28px">${n}</span>
+          <div style="flex:1;height:4px;background:#e8eef4;border-radius:2px"><div style="width:${pct(v)}%;height:100%;background:${c2};border-radius:2px"></div></div>
+          <span style="width:32px;text-align:right;font-weight:700">${pct(v)}%</span>
+        </div>`).join('')}
       </div>
-      <div style="display:flex;gap:8px;margin-top:6px;font-size:0.58rem;color:#4b6f86">
-        <span>Bind <b>${pct(c.binding_score)}%</b></span>
-        <span>ADME <b>${pct(c.adme_score)}%</b></span>
-        <span>Safe <b>${pct(c.safety_score)}%</b></span>
-      </div>
+      ${isCurr?'<div style="font-size:0.58rem;color:#1a5d7d;font-weight:700;margin-top:6px;text-align:center">&#9679; CURRENT</div>':''}
+      ${isRoot&&!isCurr?'<div style="font-size:0.58rem;color:#2b7e3a;font-weight:700;margin-top:6px;text-align:center">&#9679; ORIGINAL</div>':''}
+      ${isChild?'<div style="font-size:0.58rem;color:#c07000;font-weight:700;margin-top:6px;text-align:center">&#8594; improvement</div>':''}
     </div>`;
   };
 
@@ -978,12 +982,12 @@ function renderLinSheet(chain,children,currentId){
     const delta=((curr.total_score||0)-(root.total_score||0))*100;
     const dc=delta>=0?'#2b7e3a':'#bc3f2e';
     html+=`<div style="background:#f0f8ff;border-left:4px solid #1a5d7d;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px;font-size:0.7rem;color:#4b6f86">
-      ${pct(root.total_score)}% → ${pct(curr.total_score)}% &nbsp;<b style="color:${dc}">${delta>=0?'+':''}${delta.toFixed(2)}%</b> &nbsp;(${chain.length-1} подобрување${chain.length-1!==1?'а':''})
+      ${pct(root.total_score)}% → ${pct(curr.total_score)}% &nbsp;<b style="color:${dc}">${delta>=0?'+':''}${delta.toFixed(2)}%</b> &nbsp;(${chain.length-1} improvement${chain.length-1!==1?'s':''})
     </div>`;
   }
 
   // Chain vertical
-  html+=`<div style="font-size:0.62rem;font-weight:800;color:#1a5d7d;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Еволуциски синџир (${chain.length} чекори)</div>`;
+  html+=`<div style="font-size:0.62rem;font-weight:800;color:#1a5d7d;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Evolution Chain (${chain.length} step${chain.length!==1?'s':''})</div>`;
   chain.forEach((c,i)=>{
     html+=nodeHtml(c,i===0,c.id===currentId,false);
     if(i<chain.length-1){
@@ -992,9 +996,20 @@ function renderLinSheet(chain,children,currentId){
     }
   });
 
+  // If only 1 step, explain why
+  if(chain.length===1){
+    const node=chain[0];
+    const pid=node.parent_id;
+    html+=`<div style="margin-top:12px;font-size:0.62rem;color:#aabfce;background:#f8fafc;border-radius:8px;padding:10px 12px;line-height:1.6">
+      ${pid
+        ? `Parent ID: ${pid} — not in current dataset (top 500 by score). Full chain visible on the main platform.`
+        : `No parent reference stored — this is an original candidate refined by the autonomous agent.`}
+    </div>`;
+  }
+
   // Children
   if(children.length){
-    html+=`<div style="font-size:0.62rem;font-weight:800;color:#c07000;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px">Директни подобрувања (${children.length})</div>`;
+    html+=`<div style="font-size:0.62rem;font-weight:800;color:#c07000;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px">Direct Improvements (${children.length})</div>`;
     children.forEach(c=>{ html+=nodeHtml(c,false,false,true); });
   }
 
@@ -1554,10 +1569,10 @@ function initPanCancer(){
   <div id="linSheetBg" onclick="closeLinSheet()"></div>
   <div id="linSheetBox">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-size:0.72rem;font-weight:800;color:#1a5d7d;text-transform:uppercase;letter-spacing:.8px">&#128260; Траг на еволуција</div>
+      <div style="font-size:0.72rem;font-weight:800;color:#1a5d7d;text-transform:uppercase;letter-spacing:.8px">&#128260; Evolution Trail</div>
       <button onclick="closeLinSheet()" style="border:none;background:#f0f4f9;border-radius:8px;padding:5px 12px;font-size:0.8rem;color:#1a5d7d;font-weight:700;cursor:pointer">✕</button>
     </div>
-    <div id="linSheetContent"><div style="text-align:center;padding:30px;color:#aabfce;font-size:0.78rem">Вчитува...</div></div>
+    <div id="linSheetContent"><div style="text-align:center;padding:30px;color:#aabfce;font-size:0.78rem">Loading...</div></div>
   </div>
 </div>
 
