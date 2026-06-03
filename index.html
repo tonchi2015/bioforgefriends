@@ -1341,15 +1341,31 @@ function initTrag(){
   renderTragRoots();
 }
 
-function renderTragRoots(){
+
+async function renderTragRoots(){
   const el=document.getElementById('tragRootsList');
   const cnt=document.getElementById('tragCount');
+  if(cnt) cnt.textContent='Loading...';
+  el.innerHTML='<div style="text-align:center;padding:40px;color:#7d99ae;font-size:0.82rem">Loading evolution data...</div>';
 
-  // Find all molecules that ARE parents (have at least 1 child)
+  // Collect all parent IDs referenced in _all
   const withParent=_all.filter(m=>m.parent_id);
   const parentIdSet=new Set(withParent.map(m=>Number(m.parent_id)));
+
+  // Fetch any parent molecules missing from _all (low-score ancestors not in top-1000)
+  const inAll=new Set(_all.map(m=>Number(m.id)));
+  const missing=[...parentIdSet].filter(pid=>!inAll.has(pid));
+  if(missing.length){
+    try{
+      const ids=missing.join(',');
+      const r=await fetch(`${SUPABASE_URL}/rest/v1/public_candidates?id=in.(${ids})&select=*`,
+        {headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
+      const fetched=await r.json();
+      fetched.forEach(m=>{ _all.push(m); inAll.add(Number(m.id)); });
+    }catch(e){ console.warn('Could not fetch missing parents',e); }
+  }
+
   const roots=_all.filter(m=>parentIdSet.has(Number(m.id)));
-  if(cnt) cnt.textContent=`loaded:${_all.length} w/parent:${withParent.length} roots:${roots.length}`;
 
   if(!roots.length){
     el.innerHTML='<div style="text-align:center;padding:60px;color:#7d99ae;font-size:0.82rem">No evolution data yet.<br><span style="font-size:0.72rem">The agent is actively learning.</span></div>';
@@ -1366,7 +1382,7 @@ function renderTragRoots(){
   roots.sort((a,b)=>b._childCount-a._childCount);
   const topRoots=roots.slice(0,100);
 
-  if(cnt) cnt.textContent=`${topRoots.length} candidates`;
+  if(cnt) cnt.textContent=`${topRoots.length} root candidates`;
 
   const ts=m=>m.total_score||0;
   el.innerHTML=`<div class="grid" style="padding:0;margin:0">`+
