@@ -379,7 +379,7 @@ body{padding-bottom:70px}
     <div class="mc-cell">
       <div class="mc-cell-label">Disease Coverage</div>
       <div class="mc-cell-val">34 therapeutic areas</div>
-      <div class="mc-cell-sub">50+ cancer subtypes</div>
+      <div class="mc-cell-sub">125+ cancer types</div>
     </div>
     <div class="mc-cell">
       <div class="mc-cell-label">Generation Method</div>
@@ -474,7 +474,7 @@ body{padding-bottom:70px}
   <div class="about-wrap">
     <div class="about-hero">
       <h2>Building the Future of Drug Discovery</h2>
-      <p>BioForge GME is an autonomous AI research platform that continuously generates, scores, and refines novel therapeutic molecules — 24 hours a day, across 34 disease areas and 50+ cancer subtypes. Every candidate you see here was designed by machine intelligence trained on 2.85 million real binding measurements.</p>
+      <p>BioForge GME is an autonomous AI research platform that continuously generates, scores, and refines novel therapeutic molecules — 24 hours a day, across 34 disease areas and <strong>125 validated cancer types</strong>. Every candidate you see here was designed by machine intelligence trained on 2.85 million real binding measurements. Every candidate you see here was designed by machine intelligence trained on 2.85 million real binding measurements.</p>
     </div>
 
     <div class="about-card">
@@ -601,7 +601,19 @@ body{padding-bottom:70px}
   <!-- Coverage -->
   <div class="pc-sec">
     <div class="pc-sec-title">Cancer Type Coverage — 125 Validated Malignancies</div>
-    <p style="font-size:0.68rem;color:#7d99ae;margin-bottom:12px"><span style="background:#fce4ec;color:#880e4f;border-radius:10px;padding:2px 8px;font-size:0.62rem;font-weight:700;margin-right:4px">★ pink</span>= pediatric malignancy</p>
+    <p style="font-size:0.68rem;color:#7d99ae;margin-bottom:10px"><span style="background:#fce4ec;color:#880e4f;border-radius:10px;padding:2px 8px;font-size:0.62rem;font-weight:700;margin-right:4px">★ pink</span>= pediatric malignancy</p>
+
+    <!-- Pediatric CNS special note -->
+    <div style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);border:1px solid #f48fb1;border-radius:12px;padding:13px 15px;margin-bottom:12px">
+      <div style="font-size:0.7rem;font-weight:800;color:#880e4f;margin-bottom:5px">★ Pediatric CNS — Active Research Priority</div>
+      <div style="font-size:0.67rem;color:#5d1a35;line-height:1.7">
+        For three pediatric brain malignancies with no current curative treatment — <strong>DIPG, Medulloblastoma, and Ependymoma</strong> — our autonomous agent is pursuing a dual strategy:<br><br>
+        <strong>1. BBB-optimized synthetic candidates</strong> — small molecules engineered to cross the blood-brain barrier with delivery score ≥ 0.80, targeting the epigenetic driver mutation (H3K27M) that defines DIPG and has been inaccessible to all current therapies.<br><br>
+        <strong>2. Natural compound analogs</strong> — the agent screens structural analogs of bioactive natural products (terpenoids, flavonoids, alkaloids) with documented CNS penetration and epigenetic activity, generating semi-synthetic derivatives optimized for selectivity and potency. This approach exploits evolutionary-refined scaffolds with established safety profiles as starting points for novel CNS-active candidates.<br><br>
+        <em>DIPG kills essentially 100% of affected children within 2 years. No approved pharmacological treatment exists. Our research axis represents one of the few systematic computational efforts targeting this disease with BBB-penetrant small molecules.</em>
+      </div>
+    </div>
+
     <div id="pcCoverageGroups"></div>
   </div>
 
@@ -650,7 +662,7 @@ body{padding-bottom:70px}
   </button>
   <button class="nav-btn" id="btn-pancancer" onclick="showTab('pancancer')" style="position:relative">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="21"/><line x1="3" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="21" y2="12"/></svg>
-    PanCancer
+    PanCa
   </button>
 </nav>
 
@@ -682,12 +694,12 @@ function getDrugRevenue(d){
 // Professional disease name mapping
 const DISEASE_NAMES = {
   'cancer':                          'Carcinoma — General',
-  'ramacl pancancer':                'Pan-Cancer · 50+ cancer types',
-  'gpr139 pancancer':                'Pan-Cancer · 50+ cancer types',
-  'or2d3 pancancer':                 'Pan-Cancer · 50+ cancer types',
-  'ggta1 pancancer':                 'Pan-Cancer · 50+ cancer types',
-  'pancancer histone':               'Pan-Cancer · 50+ cancer types',
-  'pd1_pdl1 pancancer':              'Pan-Cancer · 50+ cancer types',
+  'ramacl pancancer':                'Pan-Cancer · 125+ cancer types',
+  'gpr139 pancancer':                'Pan-Cancer · 125+ cancer types',
+  'or2d3 pancancer':                 'Pan-Cancer · 125+ cancer types',
+  'ggta1 pancancer':                 'Pan-Cancer · 125+ cancer types',
+  'pancancer histone':               'Pan-Cancer · 125+ cancer types',
+  'pd1_pdl1 pancancer':              'Pan-Cancer · 125+ cancer types',
   'pc stomach cancer':               'Gastric Carcinoma',
   'pc endometrial cancer':           'Endometrial Carcinoma',
   'pc lung cancer':                  'Pulmonary Carcinoma (NSCLC)',
