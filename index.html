@@ -306,6 +306,7 @@ body{padding-bottom:70px}
   </div>
   <div class="panel-body">
     <div class="value-card" id="panelValue"></div>
+    <div id="panelCalibrated" style="display:none;background:#f4f8fc;border:1px solid #d0dce8;border-radius:14px;padding:14px 16px;margin-bottom:16px"></div>
     <div class="psec"><div class="psec-title">Scoring Profile</div><div class="rings" id="panelRings"></div></div>
     <div class="psec" id="panelPcWrap" style="display:none"><div class="psec-title">Pan-Cancer Coverage</div><div id="panelPcTargets"></div></div>
     <div class="psec"><div class="psec-title">Benchmarking vs Standard of Care</div><div id="panelCmp"></div></div>
@@ -967,6 +968,31 @@ function openPanel(id){
     <div class="value-row"><span class="value-lbl">Reference: ${dr.ref}</span><span class="value-num">${fmtMoney(dr.revenue)}/yr</span></div>
     <div class="value-row"><span class="value-lbl">Your annual share (0.2%)</span><span class="value-num big">${fmtMoney(friendAnnual)}/yr</span></div>
     <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);margin-top:10px">* Projection based on comparable approved drug revenue. Subject to clinical development and market conditions.</div>`;
+
+  // Calibrated score block (above rings)
+  const cal = m.calibrated_score;
+  const calEl = document.getElementById('panelCalibrated');
+  if(calEl){
+    if(cal!=null){
+      const calPct = (cal*100).toFixed(2);
+      const calColor = cal>=0.75?'#22c55e':cal>=0.50?'#f59e0b':'#ef4444';
+      const calVerdict = cal>=0.75?'GO — High clinical potential':cal>=0.50?'BORDERLINE — Moderate potential':'NO-GO — Needs improvement';
+      calEl.style.display='';
+      calEl.innerHTML=`
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:0.6rem;font-weight:800;color:#7d99ae;text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Calibrated Clinical Score</div>
+            <div style="font-size:0.7rem;color:#3a5a72;line-height:1.4">GO probability from trained ML model<br><span style="font-size:0.64rem;color:#7d99ae">(clinical success predictor — all 7 dimensions)</span></div>
+          </div>
+          <div style="text-align:center;background:linear-gradient(135deg,#0a2540,#1a5d7d);border-radius:12px;padding:10px 16px">
+            <div style="font-size:1.6rem;font-weight:900;color:${calColor};line-height:1">${calPct}%</div>
+            <div style="font-size:0.58rem;color:#7dc6e8;font-weight:700;margin-top:2px">${calVerdict}</div>
+          </div>
+        </div>`;
+    } else {
+      calEl.style.display='none';
+    }
+  }
 
   // Rings
   document.getElementById('panelRings').innerHTML=
