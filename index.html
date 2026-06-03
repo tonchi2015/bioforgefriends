@@ -963,10 +963,11 @@ function renderLinSheet(chain,children,currentId){
   const nodeHtml=(c,isRoot,isCurr,isChild)=>{
     const improved=c.improved_dim?dimLabel(c.improved_dim):null;
     const col=dimColors[c.improved_dim]||'#4b6f86';
-    const cls=isCurr?'ln-current':isRoot?'ln-root':isChild?'ln-child':'';
+    const border=isCurr?'2px solid #1a5d7d':isRoot?'2px solid #2b7e3a':isChild?'2px dashed #c07000':'1.5px solid #c8d9e6';
+    const bg=isCurr?'#eef5ff':isRoot?'#f0fdf4':isChild?'#fef3c7':'#f4f8fc';
     const scoreColor=isCurr?'#1a5d7d':isRoot?'#2b7e3a':'#4b6f86';
     const bars=[['Bind',c.binding_score,'#1a5d7d'],['ADME',c.adme_score,'#6d28d9'],['Safe',c.safety_score,'#42b05a']];
-    return `<div class="lin-node ${cls}">
+    return `<div style="border:${border};border-radius:12px;padding:11px 13px;background:${bg};margin-bottom:4px">
       <div style="font-size:0.58rem;color:#7d99ae;margin-bottom:4px">ID ${c.id} · ${(c.method||'').replace('_',' ')||'—'} · ${c.created_at?c.created_at.slice(0,10):'—'}</div>
       <div style="font-size:1.5rem;font-weight:800;color:${scoreColor};line-height:1.1;margin-bottom:6px">${pct(c.total_score)}<span style="font-size:0.62rem;color:#7d99ae">/100</span></div>
       ${improved?`<div style="font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:6px;background:${col}22;color:${col};display:inline-block;margin-bottom:6px">&#8679; ${improved}</div>`:''}
