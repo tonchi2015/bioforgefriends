@@ -979,7 +979,7 @@ function openPanel(id){
       const calVerdict = cal>=0.75?'GO — High clinical potential':cal>=0.50?'BORDERLINE — Moderate potential':'NO-GO — Needs improvement';
       calEl.style.display='';
       calEl.innerHTML=`
-        <div style="padding:12px 16px 10px">
+        <div style="padding:0 0 10px 0">
           <div class="psec-title">Calibrated Clinical Score</div>
           <div style="font-size:0.7rem;color:#3a5a72;line-height:1.4">GO probability from trained ML model<br><span style="font-size:0.64rem;color:#7d99ae">(clinical success predictor — all 7 dimensions)</span></div>
         </div>
