@@ -443,13 +443,31 @@ body{padding-bottom:70px}
 </footer>
 </div><!-- /tabHome -->
 
-<!-- ── New Tab ── -->
-<div id="tabNew" class="tab-panel">
+<!-- ── New Tab (hidden, kept for future use) ── -->
+<div id="tabNew" class="tab-panel" style="display:none!important">
   <div class="toolbar" style="border-bottom:1px solid #e2eaf0">
     <span style="font-size:0.82rem;font-weight:700;color:#0a2540">Recently Added</span>
     <span id="newCount" style="margin-left:auto;font-size:0.78rem;color:#7d99ae;font-weight:600"></span>
   </div>
   <div class="grid" id="gridNew"><div class="spinner"><div></div></div></div>
+</div>
+
+<!-- ── Trag Tab ── -->
+<div id="tabTrag" class="tab-panel">
+  <div class="toolbar" style="border-bottom:1px solid #e2eaf0;gap:8px">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#1a5d7d" stroke-width="1.8" stroke-linecap="round"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="3" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="13" r="1.8"/><line x1="4.8" y1="7.2" x2="6.2" y2="4.8"/><line x1="9.8" y1="4.8" x2="11.2" y2="7.2"/><line x1="11.2" y1="8.8" x2="9.8" y2="11.2"/><line x1="6.2" y1="11.2" x2="4.8" y2="8.8"/></svg>
+    <span style="font-size:0.82rem;font-weight:700;color:#0a2540">Evolution Trail</span>
+    <span id="tragCount" style="margin-left:auto;font-size:0.78rem;color:#7d99ae;font-weight:600"></span>
+  </div>
+  <div style="padding:16px 16px 100px">
+    <!-- Roots list -->
+    <div id="tragRootsList"><div style="text-align:center;padding:40px;color:#7d99ae;font-size:0.82rem">Loading improved candidates...</div></div>
+    <!-- Detail view -->
+    <div id="tragDetail" style="display:none">
+      <button onclick="tragBack()" style="margin-bottom:14px;padding:7px 16px;border-radius:8px;border:1.5px solid #c8d9e6;background:#f0f4f9;color:#1a5d7d;font-weight:700;font-size:0.8rem;cursor:pointer">&#8592; Back</button>
+      <div id="tragContent" style="min-height:200px"></div>
+    </div>
+  </div>
 </div>
 
 <!-- ── Agents Tab ── -->
@@ -657,10 +675,9 @@ body{padding-bottom:70px}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     Home
   </button>
-  <button class="nav-btn" id="btn-new" onclick="showTab('new')">
-    <div class="nav-new-dot"></div>
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    New
+  <button class="nav-btn" id="btn-trag" onclick="showTab('trag')">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="3" cy="8" r="1.8"/><circle cx="8" cy="3" r="1.8"/><circle cx="13" cy="8" r="1.8"/><circle cx="8" cy="13" r="1.8"/><line x1="4.8" y1="7.2" x2="6.2" y2="4.8"/><line x1="9.8" y1="4.8" x2="11.2" y2="7.2"/><line x1="11.2" y1="8.8" x2="9.8" y2="11.2"/><line x1="6.2" y1="11.2" x2="4.8" y2="8.8"/></svg>
+    Trail
   </button>
   <button class="nav-btn" id="btn-agents" onclick="showTab('agents')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -1296,7 +1313,7 @@ if(sessionStorage.getItem('bf_auth')){
 
 // ── Tab switching ──
 function showTab(name){
-  ['home','new','agents','about','pancancer'].forEach(t=>{
+  ['home','trag','agents','about','pancancer'].forEach(t=>{
     const tabEl=document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
     const btnEl=document.getElementById('btn-'+t);
     if(tabEl) tabEl.classList.toggle('active',t===name);
@@ -1304,8 +1321,114 @@ function showTab(name){
   });
   window.scrollTo(0,0);
   if(name==='agents'){ if(!document.getElementById('agentsWrap').children.length) renderAgents(); closeAgentResults(); }
-  if(name==='new' && !document.getElementById('gridNew').querySelector('.card')) renderNew();
+  if(name==='trag') initTrag();
   if(name==='pancancer') initPanCancer();
+}
+
+// ── Trag Tab ──
+function initTrag(){
+  const list=document.getElementById('tragRootsList');
+  if(list && list.querySelector('.trag-card')) return; // already loaded
+  renderTragRoots();
+}
+
+function renderTragRoots(){
+  const improved=_all.filter(m=>m.is_improved).sort((a,b)=>(b.total_score||0)-(a.total_score||0));
+  const el=document.getElementById('tragRootsList');
+  const cnt=document.getElementById('tragCount');
+  if(cnt) cnt.textContent=`${improved.length} improved`;
+  if(!improved.length){
+    el.innerHTML='<div style="text-align:center;padding:60px;color:#7d99ae;font-size:0.82rem">No improved candidates yet.<br><span style="font-size:0.72rem">The agent is actively learning.</span></div>';
+    return;
+  }
+  const pct=v=>((v||0)*100).toFixed(2);
+  el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">`+
+    improved.map(m=>{
+      const children=_all.filter(x=>Number(x.parent_id)===Number(m.id));
+      const bestChild=children.length?Math.max(...children.map(x=>x.total_score||0)):0;
+      return `<div class="trag-card" onclick="showTragDetail(${m.id})" style="cursor:pointer;border:1.5px solid #c8d9e6;border-radius:12px;padding:12px 13px;background:#f8fafc">
+        <div style="font-size:0.56rem;color:#7d99ae;margin-bottom:3px">ID ${m.id} · ${(m.disease||'').replace(/_/g,' ')}</div>
+        <div style="font-size:1.3rem;font-weight:800;color:#1a5d7d;line-height:1.1">${pct(m.total_score)}<span style="font-size:0.58rem;color:#7d99ae">/100</span></div>
+        <div style="margin-top:5px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+          <span style="font-size:0.58rem;font-weight:700;padding:1px 7px;border-radius:6px;background:#e0f2fe;color:#0369a1">${children.length} improvement${children.length!==1?'s':''}</span>
+          ${bestChild>m.total_score?`<span style="font-size:0.58rem;font-weight:700;color:#2b7e3a">↑ to ${pct(bestChild)}%</span>`:''}
+        </div>
+      </div>`;
+    }).join('')+`</div>`;
+}
+
+function showTragDetail(id){
+  document.getElementById('tragRootsList').style.display='none';
+  document.getElementById('tragDetail').style.display='block';
+  const el=document.getElementById('tragContent');
+  el.innerHTML='<div style="text-align:center;padding:30px;color:#7d99ae">Loading...</div>';
+  const {chain,children}=buildLinChain(id);
+  el.innerHTML=renderLineageMobile(chain,children,id);
+}
+
+function tragBack(){
+  document.getElementById('tragDetail').style.display='none';
+  document.getElementById('tragRootsList').style.display='';
+}
+
+function renderLineageMobile(chain,children,currentId){
+  if(!chain.length) return '<div style="color:#7d99ae;padding:30px;text-align:center">No data for this candidate.</div>';
+  const pct=v=>((v||0)*100).toFixed(2);
+  const dimLabel=d=>d?d.replace('_score','').replace('_',' '):'';
+  const dimColor=d=>({'binding':'#1a5d7d','adme':'#6d28d9','safety':'#42b05a','selectivity':'#c07000','delivery':'#0891b2','novelty':'#e67e22','synthesizability':'#6b7280'})[d]||'#4b6f86';
+
+  const nodeHtml=(c,isRoot,isCurr,isChild)=>{
+    const improved=c.improved_dim?dimLabel(c.improved_dim):null;
+    const border=isCurr?'2.5px solid #1a5d7d':isRoot?'2px solid #2b7e3a':isChild?'2px dashed #c07000':'1.5px solid #c8d9e6';
+    const bg=isCurr?'#eef5ff':isRoot?'#f0fdf4':isChild?'#fffbeb':'#f8fafc';
+    const scoreCol=isCurr?'#1a5d7d':isRoot?'#2b7e3a':'#4b6f86';
+    return `<div onclick="openPanel(${c.id})" style="cursor:pointer;border:${border};border-radius:12px;padding:13px 14px;background:${bg};margin-bottom:4px">
+      <div style="font-size:0.58rem;color:#7d99ae;margin-bottom:4px">ID ${c.id} · ${(c.method||'').replace('_',' ')||'—'} · ${c.created_at?c.created_at.slice(0,10):'—'}</div>
+      <div style="font-size:1.5rem;font-weight:800;color:${scoreCol};line-height:1.1;margin-bottom:6px">${pct(c.total_score)}<span style="font-size:0.62rem;color:#7d99ae">/100</span></div>
+      ${improved?`<div style="font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:6px;background:${dimColor(c.improved_dim)}22;color:${dimColor(c.improved_dim)};display:inline-block;margin-bottom:6px">&#8679; ${improved}</div>`:''}
+      <div style="display:flex;flex-direction:column;gap:3px">
+        ${[['Bind',c.binding_score,'#1a5d7d'],['ADME',c.adme_score,'#6d28d9'],['Safe',c.safety_score,'#42b05a']].map(([n,v,cl])=>`
+        <div style="display:flex;align-items:center;gap:5px;font-size:0.58rem;color:#4b6f86">
+          <span style="width:28px">${n}</span>
+          <div style="flex:1;height:4px;background:#e8eef4;border-radius:2px"><div style="width:${pct(v)}%;height:100%;background:${cl};border-radius:2px"></div></div>
+          <span style="width:32px;text-align:right;font-weight:700">${pct(v)}%</span>
+        </div>`).join('')}
+      </div>
+      ${isCurr?'<div style="font-size:0.58rem;color:#1a5d7d;font-weight:700;margin-top:6px;text-align:center">&#9679; CURRENT</div>':''}
+      ${isRoot&&!isCurr?'<div style="font-size:0.58rem;color:#2b7e3a;font-weight:700;margin-top:6px;text-align:center">&#9679; ORIGINAL</div>':''}
+      ${isChild?'<div style="font-size:0.58rem;color:#c07000;font-weight:700;margin-top:6px;text-align:center">&#8594; improvement</div>':''}
+    </div>`;
+  };
+
+  let html='';
+  if(chain.length>=2){
+    const root=chain[0],curr=chain[chain.length-1];
+    const delta=((curr.total_score||0)-(root.total_score||0))*100;
+    const dc=delta>=0?'#2b7e3a':'#bc3f2e';
+    html+=`<div style="background:#f0f8ff;border-left:4px solid #1a5d7d;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px;font-size:0.7rem;color:#4b6f86">
+      ${pct(root.total_score)}% → ${pct(curr.total_score)}% &nbsp;<b style="color:${dc}">${delta>=0?'+':''}${delta.toFixed(2)}%</b> &nbsp;(${chain.length-1} improvement${chain.length-1!==1?'s':''})
+    </div>`;
+  }
+
+  html+=`<div style="font-size:0.62rem;font-weight:800;color:#1a5d7d;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Evolution Chain (${chain.length} step${chain.length!==1?'s':''})</div>`;
+  chain.forEach((c,i)=>{
+    html+=nodeHtml(c,i===0,c.id===currentId,false);
+    if(i<chain.length-1){
+      const nd=chain[i+1].improved_dim;
+      html+=`<div style="text-align:center;font-size:0.6rem;color:${dimColor(nd)};font-weight:800;padding:3px 0">${nd?'&#8679; '+dimLabel(nd):'&#8595;'}</div>`;
+    }
+  });
+
+  if(chain.length===1){
+    const pid=chain[0].parent_id;
+    html+=`<div style="margin-top:8px;font-size:0.62rem;color:#aabfce;background:#f8fafc;border-radius:8px;padding:10px 12px;line-height:1.6">${pid?`Parent ID: ${pid} — not in current dataset.`:`Original candidate — refined by the autonomous agent.`}</div>`;
+  }
+
+  if(children.length){
+    html+=`<div style="font-size:0.62rem;font-weight:800;color:#c07000;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px">&#8594; Direct Improvements (${children.length})</div>`;
+    children.forEach(c=>{ html+=nodeHtml(c,false,false,true); });
+  }
+  return html;
 }
 
 // ── New tab ──
