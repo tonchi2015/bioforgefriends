@@ -850,7 +850,7 @@ async function startPolling(){
       const latest=(d[0]||{}).updated_at||'';
       if(latest && latest!==_lastUpdated && _lastUpdated){
         _lastUpdated=latest;
-        const full=await fetch(`${SUPABASE_URL}/rest/v1/public_candidates?select=*&order=total_score.desc&limit=500`,
+        const full=await fetch(`${SUPABASE_URL}/rest/v1/public_candidates?select=*&order=total_score.desc&limit=6100`,
           {headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
         const fresh=await full.json();
         const added=Math.max(0,fresh.length-_all.length);
@@ -1255,7 +1255,7 @@ function applyFilters(){
 // ── Load ──────────────────────────────────────────────────────────
 async function load(){
   try{
-    const resp=await fetch(`${SUPABASE_URL}/rest/v1/public_candidates?select=*&order=total_score.desc&limit=500`,
+    const resp=await fetch(`${SUPABASE_URL}/rest/v1/public_candidates?select=*&order=total_score.desc&limit=6100`,
       {headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
     if(!resp.ok) throw new Error(resp.statusText);
     _all=await resp.json();
@@ -1341,18 +1341,26 @@ function renderTragRoots(){
     el.innerHTML='<div style="text-align:center;padding:60px;color:#7d99ae;font-size:0.82rem">No improved candidates yet.<br><span style="font-size:0.72rem">The agent is actively learning.</span></div>';
     return;
   }
-  const pct=v=>((v||0)*100).toFixed(2);
-  el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">`+
+  const bs=m=>m.binding_score||0, as_=m=>m.adme_score||0, ss_=m=>m.safety_score||0, ts=m=>m.total_score||0;
+  el.innerHTML=`<div class="grid" style="padding:0;margin:0">`+
     improved.map(m=>{
       const children=_all.filter(x=>Number(x.parent_id)===Number(m.id));
       const bestChild=children.length?Math.max(...children.map(x=>x.total_score||0)):0;
-      return `<div class="trag-card" onclick="showTragDetail(${m.id})" style="cursor:pointer;border:1.5px solid #c8d9e6;border-radius:12px;padding:12px 13px;background:#f8fafc">
-        <div style="font-size:0.56rem;color:#7d99ae;margin-bottom:3px">ID ${m.id} · ${(m.disease||'').replace(/_/g,' ')}</div>
-        <div style="font-size:1.3rem;font-weight:800;color:#1a5d7d;line-height:1.1">${pct(m.total_score)}<span style="font-size:0.58rem;color:#7d99ae">/100</span></div>
-        <div style="margin-top:5px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
-          <span style="font-size:0.58rem;font-weight:700;padding:1px 7px;border-radius:6px;background:#e0f2fe;color:#0369a1">${children.length} improvement${children.length!==1?'s':''}</span>
-          ${bestChild>m.total_score?`<span style="font-size:0.58rem;font-weight:700;color:#2b7e3a">↑ to ${pct(bestChild)}%</span>`:''}
+      const tag=diseaseTag(m.disease);
+      return `<div class="card ${tag}" onclick="showTragDetail(${m.id})">
+        <span class="card-badge badge-improved">IMPROVED ↑</span>
+        <div class="card-id">${m.name||'GME-'+m.id}</div>
+        <div class="card-name">${diseaseName(m.disease||'Unknown')}</div>
+        <div class="total-score"><span>TOTAL SCORE</span><span style="font-size:1.25rem;font-weight:800;color:#fff">${((ts(m))*100).toFixed(2)}%</span></div>
+        <div class="scores">
+          <div class="score-item"><div class="score-label">BINDING</div><div class="score-val" style="color:${sc(bs(m))}">${((bs(m))*100).toFixed(0)}%</div>${scoreBar(bs(m),sc(bs(m)))}</div>
+          <div class="score-item"><div class="score-label">ADME</div><div class="score-val" style="color:${sc(as_(m))}">${((as_(m))*100).toFixed(0)}%</div>${scoreBar(as_(m),sc(as_(m)))}</div>
         </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
+          <span style="font-size:0.62rem;font-weight:700;padding:2px 9px;border-radius:6px;background:#e0f2fe;color:#0369a1">${children.length} improvement${children.length!==1?'s':''}</span>
+          ${bestChild>ts(m)?`<span style="font-size:0.62rem;font-weight:700;color:#2b7e3a">↑ best ${((bestChild)*100).toFixed(2)}%</span>`:''}
+        </div>
+        <button class="view-btn" style="margin-top:10px">View Evolution →</button>
       </div>`;
     }).join('')+`</div>`;
 }
