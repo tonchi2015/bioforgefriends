@@ -1675,25 +1675,39 @@ let _pcInited=false;
 function renderPcCoverage(){
   const el=document.getElementById('pcCoverageGroups');
   if(!el) return;
+  const svgs={
+    blood:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6 8 4 13 4 16a8 8 0 0 0 16 0c0-3-2-8-8-14z"/></svg>`,
+    brain:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.14"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.14"/></svg>`,
+    lung:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18a4 4 0 0 1-4-4 4 4 0 0 1 4-4h1V6a1 1 0 0 1 2 0v11"/><path d="M18 18a4 4 0 0 0 4-4 4 4 0 0 0-4-4h-1V6a1 1 0 0 0-2 0v11"/></svg>`,
+    gi:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>`,
+    gyn:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 18h6"/></svg>`,
+    sarc:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2h6l4 6-7 13L2 8z"/></svg>`,
+    breast:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+    uro:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="10" rx="5" ry="7"/><path d="M12 17v5M9 20h6"/></svg>`,
+    hn:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M5.5 20a8.38 8.38 0 0 1 13 0"/></svg>`,
+    endo:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+    skin:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>`,
+    rare:`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a5d7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  };
   const cats=[
-    {icon:'🩸',label:'Leukemia & Lymphoma',count:23},
-    {icon:'🧠',label:'Brain & CNS',count:18},
-    {icon:'🫁',label:'Lung & Thoracic',count:6},
-    {icon:'🍽️',label:'Gastrointestinal',count:16},
-    {icon:'♀',label:'Gynecological',count:10},
-    {icon:'🦴',label:'Sarcomas',count:14},
-    {icon:'🎗️',label:'Breast',count:3},
-    {icon:'🔬',label:'Urological',count:8},
-    {icon:'🦷',label:'Head & Neck',count:8},
-    {icon:'⚗️',label:'Thyroid & Endocrine',count:5},
-    {icon:'🌑',label:'Skin & Melanoma',count:6},
-    {icon:'🔭',label:'Rare & Other',count:11},
+    {svg:svgs.blood,label:'Leukemia & Lymphoma',count:23},
+    {svg:svgs.brain,label:'Brain & CNS',count:18},
+    {svg:svgs.lung,label:'Lung & Thoracic',count:6},
+    {svg:svgs.gi,label:'Gastrointestinal',count:16},
+    {svg:svgs.gyn,label:'Gynecological',count:10},
+    {svg:svgs.sarc,label:'Sarcomas',count:14},
+    {svg:svgs.breast,label:'Breast',count:3},
+    {svg:svgs.uro,label:'Urological',count:8},
+    {svg:svgs.hn,label:'Head & Neck',count:8},
+    {svg:svgs.endo,label:'Thyroid & Endocrine',count:5},
+    {svg:svgs.skin,label:'Skin & Melanoma',count:6},
+    {svg:svgs.rare,label:'Rare & Other',count:11},
   ];
   el.innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
       ${cats.map(c=>`
         <div style="background:#f4f8fc;border:1px solid #e2eaf0;border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-          <span style="font-size:1.1rem">${c.icon}</span>
+          ${c.svg}
           <div>
             <div style="font-size:0.65rem;font-weight:700;color:#0a2540">${c.label}</div>
             <div style="font-size:0.6rem;color:#7d99ae">${c.count} cancer types</div>
