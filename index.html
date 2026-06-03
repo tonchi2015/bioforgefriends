@@ -1364,12 +1364,13 @@ function renderTragRoots(){
     m._bestChild=ch.length?Math.max(...ch.map(x=>x.total_score||0)):0;
   });
   roots.sort((a,b)=>b._childCount-a._childCount);
+  const topRoots=roots.slice(0,100);
 
-  if(cnt) cnt.textContent=`${roots.length} root candidates`;
+  if(cnt) cnt.textContent=`${topRoots.length} candidates`;
 
   const ts=m=>m.total_score||0;
   el.innerHTML=`<div class="grid" style="padding:0;margin:0">`+
-    roots.map(m=>{
+    topRoots.map(m=>{
       const tag=diseaseTag(m.disease);
       const bs=m.binding_score||0, as_=m.adme_score||0;
       return `<div class="card ${tag}" onclick="showTragDetail(${m.id})">
