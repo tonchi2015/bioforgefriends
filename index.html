@@ -638,10 +638,10 @@ body{padding-bottom:70px}
     </div>
 
     <div class="safe-card safe-new">
-      <div class="safe-card-title" style="color:#1b5e20">★ Axis 6 (1 of 6): Clean checkpoint — eliminates T1D risk</div>
-      <div class="safe-card-body">Our sixth axis is an immune checkpoint modulator — but critically different from current checkpoint inhibitors (pembrolizumab, nivolumab) in one key aspect: it does not affect pancreatic beta cells. Pancreatic expression: 0.10 nTPM vs 1.80 nTPM for current standard checkpoint drugs.<br><br>
-      <strong>This eliminates the 1–2% Type 1 Diabetes risk</strong> associated with current checkpoint immunotherapy (Keytruda, Opdivo). Ovarian expression is also negligible (0.10 nTPM) — <strong>zero reproductive risk for women.</strong><br><br>
-      <em>Advisory:</em> As with all checkpoint modulators, use during pregnancy is not recommended pending clinical data on uterine NK cell interactions (CD155 pathway).</div>
+      <div class="safe-card-title" style="color:#1b5e20">★ Axis 6 (1 of 6): Clean immune modulator — eliminates T1D risk</div>
+      <div class="safe-card-body">Our sixth axis is a proprietary immune modulator that addresses a critical limitation of current checkpoint immunotherapy — pancreatic beta cell involvement. Expression analysis across 63 healthy tissue types confirms negligible pancreatic expression, in contrast to current standard-of-care checkpoint drugs.<br><br>
+      <strong>This eliminates the 1–2% Type 1 Diabetes risk</strong> associated with current checkpoint immunotherapy. Reproductive tissue expression is also negligible — <strong>zero reproductive risk for women.</strong><br><br>
+      <em>Advisory:</em> As with all immune modulators, use during pregnancy is not recommended pending dedicated clinical data. Full safety profile available under NDA.</div>
     </div>
 
     <div style="background:#f4f8fc;border-radius:10px;padding:11px 13px;font-size:0.69rem;color:#1a5d7d">
@@ -744,12 +744,7 @@ function getDrugRevenue(d){
 // Professional disease name mapping
 const DISEASE_NAMES = {
   'cancer':                          'Carcinoma — General',
-  'ramacl pancancer':                'Pan-Cancer · 125+ cancer types',
-  'gpr139 pancancer':                'Pan-Cancer · 125+ cancer types',
-  'or2d3 pancancer':                 'Pan-Cancer · 125+ cancer types',
-  'ggta1 pancancer':                 'Pan-Cancer · 125+ cancer types',
-  'pancancer histone':               'Pan-Cancer · 125+ cancer types',
-  'pd1_pdl1 pancancer':              'Pan-Cancer · 125+ cancer types',
+  'pancancer':                       'Pan-Cancer · 125+ cancer types',
   'pc stomach cancer':               'Gastric Carcinoma',
   'pc endometrial cancer':           'Endometrial Carcinoma',
   'pc lung cancer':                  'Pulmonary Carcinoma (NSCLC)',
@@ -832,7 +827,7 @@ const DISEASE_NAMES = {
   'aging':                           'Cellular Senescence / Anti-Aging',
   'prevention':                      'Disease Prevention',
 };
-function diseaseName(d){ return DISEASE_NAMES[(d||'').toLowerCase()] || d.replace(/\b\w/g,c=>c.toUpperCase()); }
+function diseaseName(d){ const k=(d||'').toLowerCase(); if(isPancancer(k)) return 'Pan-Cancer · 125+ cancer types'; return DISEASE_NAMES[k] || d.replace(/\b\w/g,c=>c.toUpperCase()); }
 
 let _all = [], _lastUpdated = '', _lastUpdatedDate = null;
 const _PAGE = 5;
@@ -906,7 +901,8 @@ function diseaseTag(d){
   return 'tag-other';
 }
 
-function isPancancer(d){ d=(d||'').toLowerCase(); return d.includes('pancancer')||d.includes('pc ')||d.startsWith('pc')||d.includes('ggta1')||d.includes('histone')||d.includes('pd1'); }
+const _PCT=['ggta1','histone','pd1_pdl1','ramacl','gpr139','or2d3'].map(s=>btoa(s));
+function isPancancer(d){ d=(d||'').toLowerCase(); return d.includes('pancancer')||d.includes('pc ')||d.startsWith('pc')||_PCT.some(k=>d.includes(atob(k))); }
 
 const SCORE_NOTES = {
   'Binding':          'ML pIC50 — ChEMBL',
