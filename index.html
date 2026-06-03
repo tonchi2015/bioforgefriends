@@ -1338,8 +1338,6 @@ function showTab(name){
 
 // ── Trag Tab ──
 function initTrag(){
-  const list=document.getElementById('tragRootsList');
-  if(list && list.querySelector('.trag-card')) return; // already loaded
   renderTragRoots();
 }
 
@@ -1348,8 +1346,10 @@ function renderTragRoots(){
   const cnt=document.getElementById('tragCount');
 
   // Find all molecules that ARE parents (have at least 1 child)
-  const parentIdSet=new Set(_all.filter(m=>m.parent_id).map(m=>Number(m.parent_id)));
+  const withParent=_all.filter(m=>m.parent_id);
+  const parentIdSet=new Set(withParent.map(m=>Number(m.parent_id)));
   const roots=_all.filter(m=>parentIdSet.has(Number(m.id)));
+  if(cnt) cnt.textContent=`loaded:${_all.length} w/parent:${withParent.length} roots:${roots.length}`;
 
   if(!roots.length){
     el.innerHTML='<div style="text-align:center;padding:60px;color:#7d99ae;font-size:0.82rem">No evolution data yet.<br><span style="font-size:0.72rem">The agent is actively learning.</span></div>';
