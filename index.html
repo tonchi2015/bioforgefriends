@@ -1333,33 +1333,44 @@ function initTrag(){
 }
 
 function renderTragRoots(){
-  const improved=_all.filter(m=>m.is_improved).sort((a,b)=>(b.total_score||0)-(a.total_score||0));
   const el=document.getElementById('tragRootsList');
   const cnt=document.getElementById('tragCount');
-  if(cnt) cnt.textContent=`${improved.length} improved`;
-  if(!improved.length){
-    el.innerHTML='<div style="text-align:center;padding:60px;color:#7d99ae;font-size:0.82rem">No improved candidates yet.<br><span style="font-size:0.72rem">The agent is actively learning.</span></div>';
+
+  // Find all molecules that ARE parents (have at least 1 child)
+  const parentIdSet=new Set(_all.filter(m=>m.parent_id).map(m=>Number(m.parent_id)));
+  const roots=_all.filter(m=>parentIdSet.has(Number(m.id)));
+
+  if(!roots.length){
+    el.innerHTML='<div style="text-align:center;padding:60px;color:#7d99ae;font-size:0.82rem">No evolution data yet.<br><span style="font-size:0.72rem">The agent is actively learning.</span></div>';
+    if(cnt) cnt.textContent='';
     return;
   }
-  const bs=m=>m.binding_score||0, as_=m=>m.adme_score||0, ss_=m=>m.safety_score||0, ts=m=>m.total_score||0;
+
+  // Attach child count & best child score, then sort by child count DESC
+  roots.forEach(m=>{
+    const ch=_all.filter(x=>Number(x.parent_id)===Number(m.id));
+    m._childCount=ch.length;
+    m._bestChild=ch.length?Math.max(...ch.map(x=>x.total_score||0)):0;
+  });
+  roots.sort((a,b)=>b._childCount-a._childCount);
+
+  if(cnt) cnt.textContent=`${roots.length} root candidates`;
+
+  const ts=m=>m.total_score||0;
   el.innerHTML=`<div class="grid" style="padding:0;margin:0">`+
-    improved.map(m=>{
-      const children=_all.filter(x=>Number(x.parent_id)===Number(m.id));
-      const bestChild=children.length?Math.max(...children.map(x=>x.total_score||0)):0;
+    roots.map(m=>{
       const tag=diseaseTag(m.disease);
+      const bs=m.binding_score||0, as_=m.adme_score||0;
       return `<div class="card ${tag}" onclick="showTragDetail(${m.id})">
-        <span class="card-badge badge-improved">IMPROVED ↑</span>
+        <span class="card-badge badge-improved">${m._childCount} evolutions</span>
         <div class="card-id">${m.name||'GME-'+m.id}</div>
         <div class="card-name">${diseaseName(m.disease||'Unknown')}</div>
-        <div class="total-score"><span>TOTAL SCORE</span><span style="font-size:1.25rem;font-weight:800;color:#fff">${((ts(m))*100).toFixed(2)}%</span></div>
+        <div class="total-score"><span>TOTAL SCORE</span><span style="font-size:1.25rem;font-weight:800;color:#fff">${(ts(m)*100).toFixed(2)}%</span></div>
         <div class="scores">
-          <div class="score-item"><div class="score-label">BINDING</div><div class="score-val" style="color:${sc(bs(m))}">${((bs(m))*100).toFixed(0)}%</div>${scoreBar(bs(m),sc(bs(m)))}</div>
-          <div class="score-item"><div class="score-label">ADME</div><div class="score-val" style="color:${sc(as_(m))}">${((as_(m))*100).toFixed(0)}%</div>${scoreBar(as_(m),sc(as_(m)))}</div>
+          <div class="score-item"><div class="score-label">BINDING</div><div class="score-val" style="color:${sc(bs)}">${(bs*100).toFixed(0)}%</div>${scoreBar(bs,sc(bs))}</div>
+          <div class="score-item"><div class="score-label">ADME</div><div class="score-val" style="color:${sc(as_)}">${(as_*100).toFixed(0)}%</div>${scoreBar(as_,sc(as_))}</div>
         </div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">
-          <span style="font-size:0.62rem;font-weight:700;padding:2px 9px;border-radius:6px;background:#e0f2fe;color:#0369a1">${children.length} improvement${children.length!==1?'s':''}</span>
-          ${bestChild>ts(m)?`<span style="font-size:0.62rem;font-weight:700;color:#2b7e3a">↑ best ${((bestChild)*100).toFixed(2)}%</span>`:''}
-        </div>
+        ${m._bestChild>ts(m)?`<div style="margin-top:6px;font-size:0.62rem;font-weight:700;color:#2b7e3a">↑ best result ${(m._bestChild*100).toFixed(2)}%</div>`:''}
         <button class="view-btn" style="margin-top:10px">View Evolution →</button>
       </div>`;
     }).join('')+`</div>`;
