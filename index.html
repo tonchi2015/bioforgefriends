@@ -942,14 +942,16 @@ function closeLinSheet(){
 function buildLinChain(id){
   const chain=[];
   const visited=new Set();
-  let node=_all.find(m=>m.id===id);
+  const nid=Number(id);
+  let node=_all.find(m=>Number(m.id)===nid);
   while(node&&!visited.has(node.id)){
     visited.add(node.id);
     chain.unshift(node);
     if(!node.parent_id) break;
-    node=_all.find(m=>m.id===node.parent_id);
+    const pid=Number(node.parent_id);
+    node=_all.find(m=>Number(m.id)===pid);
   }
-  const children=_all.filter(m=>m.parent_id===id&&m.id!==id);
+  const children=_all.filter(m=>Number(m.parent_id)===nid&&Number(m.id)!==nid);
   return{chain,children};
 }
 function renderLinSheet(chain,children,currentId){
