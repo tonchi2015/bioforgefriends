@@ -306,8 +306,8 @@ body{padding-bottom:70px}
   </div>
   <div class="panel-body">
     <div class="value-card" id="panelValue"></div>
-    <div id="panelCalibrated" style="display:none;background:#f4f8fc;border:1px solid #d0dce8;border-radius:14px;padding:14px 16px;margin-bottom:16px"></div>
     <div class="psec"><div class="psec-title">Scoring Profile</div><div class="rings" id="panelRings"></div></div>
+    <div id="panelCalibrated" style="display:none;background:#f4f8fc;border:1px solid #d0dce8;border-radius:14px;padding:14px 16px;margin-bottom:16px;box-sizing:border-box;width:100%"></div>
     <div class="psec" id="panelPcWrap" style="display:none"><div class="psec-title">Pan-Cancer Coverage</div><div id="panelPcTargets"></div></div>
     <div class="psec"><div class="psec-title">Benchmarking vs Standard of Care</div><div id="panelCmp"></div></div>
     <div class="psec"><div class="psec-title">Safety &amp; Drug-likeness</div><div class="safety-grid" id="panelSafety"></div></div>
@@ -671,7 +671,7 @@ body{padding-bottom:70px}
 const SUPABASE_URL = 'https://ohywtzhafpoyrtuyaqni.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_sQ5WW8jzLxC9__JvLelDkQ_GFPrO2_C';
 
-const FRIEND_SHARE = 0.002; // 0.2% of founder's 3%
+const FRIEND_SHARE = 0.015; // 1.5% of founder's 5%
 
 // Annual revenue of comparable drugs (USD)
 const DRUG_REVENUE = {
@@ -962,11 +962,11 @@ function openPanel(id){
 
   // Value — based on comparable drug annual revenue
   const dr = getDrugRevenue(m.disease);
-  const friendAnnual = dr.revenue * 0.03 * FRIEND_SHARE;
+  const friendAnnual = dr.revenue * 0.05 * FRIEND_SHARE;
   document.getElementById('panelValue').innerHTML=`
     <div class="value-title">Revenue Projection<br><span style="font-weight:500;opacity:0.8">Based on Comparable Drug</span></div>
     <div class="value-row"><span class="value-lbl">Reference: ${dr.ref}</span><span class="value-num">${fmtMoney(dr.revenue)}/yr</span></div>
-    <div class="value-row"><span class="value-lbl">Your annual share (0.2%)</span><span class="value-num big">${fmtMoney(friendAnnual)}/yr</span></div>
+    <div class="value-row"><span class="value-lbl">Your annual share (1.5% of 5%)</span><span class="value-num big">${fmtMoney(friendAnnual)}/yr</span></div>
     <div style="font-size:0.65rem;color:rgba(255,255,255,0.45);margin-top:10px">* Projection based on comparable approved drug revenue. Subject to clinical development and market conditions.</div>`;
 
   // Calibrated score block (above rings)
