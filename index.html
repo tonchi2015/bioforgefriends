@@ -283,7 +283,7 @@ body{padding-bottom:70px}
 .lin-node{border:1.5px solid #c8d9e6;border-radius:12px;padding:11px 13px;background:#f4f8fc;margin-bottom:4px}
 .lin-node.ln-root{border:1.5px solid #2b7e3a;background:#f0fdf4}
 .lin-node.ln-current{border:2px solid #1a5d7d;background:#eef5ff}
-.lin-node.ln-child{border:1.5px dashed #f59e0b;background:#fffbeb}
+.lin-node.ln-child{border:2px dashed #c07000;background:#fffbeb}
 .lin-arrow{text-align:center;font-size:0.6rem;color:#f59e0b;font-weight:800;padding:3px 0;letter-spacing:.4px}
 </style>
 </head>
@@ -977,7 +977,7 @@ function renderLinSheet(chain,children,currentId){
       </div>
       ${isCurr?'<div style="font-size:0.58rem;color:#1a5d7d;font-weight:700;margin-top:6px;text-align:center">&#9679; CURRENT</div>':''}
       ${isRoot&&!isCurr?'<div style="font-size:0.58rem;color:#2b7e3a;font-weight:700;margin-top:6px;text-align:center">&#9679; ORIGINAL</div>':''}
-      ${isChild?'<div style="font-size:0.58rem;color:#f59e0b;font-weight:700;margin-top:6px;text-align:center">&#8594; improvement</div>':''}
+      ${isChild?'<div style="font-size:0.58rem;color:#c07000;font-weight:700;margin-top:6px;text-align:center">&#8594; improvement</div>':''}
     </div>`;
   };
 
@@ -1015,7 +1015,7 @@ function renderLinSheet(chain,children,currentId){
 
   // Children
   if(children.length){
-    html+=`<div style="font-size:0.62rem;font-weight:800;color:#f59e0b;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px">Direct Improvements (${children.length})</div>`;
+    html+=`<div style="font-size:0.62rem;font-weight:800;color:#c07000;text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px">Direct Improvements (${children.length})</div>`;
     children.forEach(c=>{ html+=nodeHtml(c,false,false,true); });
   }
 
